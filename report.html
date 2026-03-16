@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>YieldIQ — Your Property Analysis</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Syne:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --navy:      #0b1f3a;
+  --navy-mid:  #122847;
+  --gold:      #b8922e;
+  --gold-lt:   #c9a84c;
+  --cream:     #f4efe6;
+  --ink:       #1a2a3a;
+  --ink-mid:   #4a5e72;
+  --ink-muted: #7a8fa0;
+  --border:    #e0e7ee;
+  --bg:        #ffffff;
+  --bg-soft:   #f7f9fb;
+  --success:   #1a7a52;
+  --success-bg:#e8f5ee;
+  --error:     #c0392b;
+  --error-bg:  #fdf0ee;
+  --warn:      #7a5f00;
+  --warn-bg:   #fefae8;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Syne', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── HEADER ── */
+header {
+  background: var(--navy);
+  padding: 0 48px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+}
+.logo em { font-style: italic; color: var(--gold-lt); }
+.logo-dot { width: 5px; height: 5px; background: var(--gold); border-radius: 50%; display: inline-block; margin-left: 2px; vertical-align: super; }
+
+.header-right { display: flex; align-items: center; gap: 20px; }
+.header-tag { font-size: 0.68rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4); }
+.header-cta {
+  background: var(--gold);
+  color: var(--navy);
+  padding: 8px 18px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.header-cta:hover { background: var(--gold-lt); }
+
+/* ── HERO BAND ── */
+.hero-band {
+  background: var(--navy);
+  padding: 36px 48px 40px;
+  border-bottom: 3px solid var(--gold);
+}
+
+.property-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 6px;
+}
+
+.property-address {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 8px;
+  line-height: 1.15;
+}
+
+.property-meta {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.45);
+  letter-spacing: 0.5px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── VERDICT BAR ── */
+.verdict-band {
+  padding: 18px 48px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.verdict-band.go   { background: var(--success-bg); color: var(--success); border-bottom: 1px solid rgba(26,122,82,0.2); }
+.verdict-band.nogo { background: var(--error-bg);   color: var(--error);   border-bottom: 1px solid rgba(192,57,43,0.15); }
+.verdict-band.borderline { background: var(--warn-bg); color: var(--warn); border-bottom: 1px solid rgba(184,146,46,0.25); }
+
+.verdict-icon { font-size: 1.1rem; }
+.verdict-sub  { font-weight: 400; font-size: 0.8rem; opacity: 0.8; margin-left: auto; font-family: 'JetBrains Mono', monospace; }
+
+/* ── MAIN LAYOUT ── */
+.main { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; display: grid; grid-template-columns: 1fr 340px; gap: 28px; }
+
+/* ── METRIC CARDS ── */
+.metrics-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 28px; }
+
+.metric-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 22px;
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--border);
+}
+
+.metric-card.highlight::before { background: var(--gold); }
+.metric-card.positive::before  { background: var(--success); }
+.metric-card.negative::before  { background: var(--error); }
+
+.metric-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: 8px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.metric-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--navy);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.metric-value.positive { color: var(--success); }
+.metric-value.negative { color: var(--error); }
+.metric-value.gold     { color: var(--gold); }
+
+.metric-sub {
+  font-size: 0.7rem;
+  color: var(--ink-muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── DETAIL TABLE ── */
+.section-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.section-head {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-soft);
+}
+
+.section-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+
+.section-badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: rgba(184,146,46,0.1);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.85rem;
+}
+
+.detail-row:last-child { border-bottom: none; }
+.detail-label { color: var(--ink-mid); }
+.detail-val { font-family: 'JetBrains Mono', monospace; font-weight: 500; color: var(--navy); }
+.detail-val.pos { color: var(--success); }
+.detail-val.neg { color: var(--error); }
+.detail-val.gold { color: var(--gold); }
+
+/* ── YEAR TABLE ── */
+.year-table { width: 100%; border-collapse: collapse; }
+.year-table th {
+  padding: 10px 16px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  text-align: right;
+  background: var(--bg-soft);
+  border-bottom: 1px solid var(--border);
+}
+.year-table th:first-child { text-align: left; }
+.year-table td {
+  padding: 11px 16px;
+  font-size: 0.82rem;
+  border-bottom: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  text-align: right;
+  color: var(--ink);
+}
+.year-table td:first-child { text-align: left; color: var(--ink-mid); font-family: 'Syne', sans-serif; font-size: 0.8rem; }
+.year-table tr:last-child td { border-bottom: none; }
+.year-table tr:nth-child(even) td { background: var(--bg-soft); }
+.year-table td.pos { color: var(--success); }
+.year-table td.neg { color: var(--error); }
+
+/* ── SIDEBAR ── */
+.sidebar {}
+
+.sidebar-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  position: sticky;
+  top: 20px;
+}
+
+/* ── EDITABLE INPUTS ── */
+.input-section {
+  padding: 20px 20px 4px;
+}
+
+.input-section-title {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.edit-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+
+.edit-label {
+  font-size: 0.78rem;
+  color: var(--ink-mid);
+  flex: 1;
+  line-height: 1.3;
+}
+
+.edit-input-wrap {
+  position: relative;
+  width: 110px;
+  flex-shrink: 0;
+}
+
+.edit-prefix, .edit-suffix {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+  pointer-events: none;
+  z-index: 1;
+}
+.edit-prefix { left: 8px; }
+.edit-suffix { right: 8px; }
+
+.edit-input {
+  width: 100%;
+  padding: 7px 8px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  color: var(--navy);
+  background: var(--bg-soft);
+  outline: none;
+  text-align: right;
+  transition: border-color 0.2s, background 0.2s;
+  -moz-appearance: textfield;
+}
+.edit-input::-webkit-outer-spin-button,
+.edit-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.edit-input:focus { border-color: var(--navy); background: #fff; }
+.edit-input.has-prefix { padding-left: 22px; text-align: right; }
+.edit-input.has-suffix { padding-right: 22px; }
+
+.recalc-btn {
+  width: calc(100% - 40px);
+  margin: 12px 20px 20px;
+  background: var(--navy);
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 5px;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.recalc-btn:hover { background: #152d50; }
+
+.pulse { animation: pulse 0.4s ease; }
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+
+/* ── PREMIUM CTA ── */
+.premium-card {
+  background: var(--navy);
+  border-radius: 8px;
+  padding: 24px 22px;
+  margin-bottom: 20px;
+}
+
+.premium-eyebrow {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold-lt);
+  margin-bottom: 10px;
+}
+
+.premium-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.3;
+  margin-bottom: 12px;
+}
+
+.premium-features {
+  list-style: none;
+  margin-bottom: 18px;
+}
+
+.premium-features li {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.65);
+  padding: 4px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.4;
+}
+
+.premium-features li::before {
+  content: '→';
+  color: var(--gold);
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  margin-top: 2px;
+}
+
+.premium-btn {
+  display: block;
+  background: var(--gold);
+  color: var(--navy);
+  padding: 11px 20px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-decoration: none;
+  text-align: center;
+  transition: background 0.2s;
+}
+.premium-btn:hover { background: var(--gold-lt); }
+
+/* ── UPDATED INDICATOR ── */
+.updated-badge {
+  display: none;
+  font-size: 0.68rem;
+  color: var(--success);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 4px 10px;
+  background: var(--success-bg);
+  border-radius: 20px;
+}
+.updated-badge.show { display: inline-flex; align-items: center; gap: 5px; }
+
+/* ── DISCLAIMER ── */
+.disclaimer {
+  font-size: 0.7rem;
+  color: var(--ink-muted);
+  text-align: center;
+  padding: 24px;
+  border-top: 1px solid var(--border);
+  line-height: 1.6;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .main { grid-template-columns: 1fr; }
+  .metrics-grid { grid-template-columns: 1fr 1fr; }
+  .sidebar-card { position: static; }
+  header, .hero-band, .verdict-band { padding-left: 20px; padding-right: 20px; }
+}
+
+@media (max-width: 560px) {
+  .metrics-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">Yield<em>IQ</em><span class="logo-dot"></span></a>
+  <div class="header-right">
+    <span class="header-tag">Property Report</span>
+    <a href="/yieldiq-analyze.html" class="header-cta">New Analysis</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero-band">
+  <div class="property-label">Investment Property Analysis</div>
+  <div class="property-address" id="heroAddress">Loading...</div>
+  <div class="property-meta" id="heroMeta">—</div>
+</div>
+
+<!-- VERDICT -->
+<div class="verdict-band" id="verdictBand">
+  <span class="verdict-icon" id="verdictIcon">⏳</span>
+  <span id="verdictText">Calculating...</span>
+  <span class="verdict-sub" id="verdictSub"></span>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="content-col">
+
+    <!-- KEY METRICS -->
+    <div class="metrics-grid">
+      <div class="metric-card highlight">
+        <div class="metric-label">Levered IRR</div>
+        <div class="metric-value gold" id="mIrr">—</div>
+        <div class="metric-sub" id="mIrrSub">over hold period</div>
+      </div>
+      <div class="metric-card" id="cfCard">
+        <div class="metric-label">Monthly Cash Flow</div>
+        <div class="metric-value" id="mCashflow">—</div>
+        <div class="metric-sub">after all expenses</div>
+      </div>
+      <div class="metric-card" id="cocCard">
+        <div class="metric-label">Cash-on-Cash Return</div>
+        <div class="metric-value" id="mCoc">—</div>
+        <div class="metric-sub">year 1 return on equity</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Monthly Mortgage</div>
+        <div class="metric-value" id="mMortgage">—</div>
+        <div class="metric-sub" id="mMortgageSub">P&I payment</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Break-Even Rent</div>
+        <div class="metric-value" id="mBreakeven">—</div>
+        <div class="metric-sub">minimum to cover costs</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Max Purchase Price</div>
+        <div class="metric-value" id="mMaxprice">—</div>
+        <div class="metric-sub">to hit your target IRR</div>
+      </div>
+    </div>
+
+    <!-- DEAL DETAILS -->
+    <div class="section-card">
+      <div class="section-head">
+        <span class="section-title">Deal Summary</span>
+        <span class="updated-badge" id="updatedBadge">✓ Recalculated</span>
+      </div>
+      <div class="detail-row"><span class="detail-label">Purchase Price</span><span class="detail-val" id="dPrice">—</span></div>
+      <div class="detail-row"><span class="detail-label">Down Payment</span><span class="detail-val" id="dDown">—</span></div>
+      <div class="detail-row"><span class="detail-label">Loan Amount</span><span class="detail-val" id="dLoan">—</span></div>
+      <div class="detail-row"><span class="detail-label">Interest Rate</span><span class="detail-val" id="dRate">—</span></div>
+      <div class="detail-row"><span class="detail-label">Monthly Gross Rent</span><span class="detail-val" id="dRent">—</span></div>
+      <div class="detail-row"><span class="detail-label">Effective Annual Rent (after vacancy)</span><span class="detail-val" id="dEffRent">—</span></div>
+      <div class="detail-row"><span class="detail-label">Total Monthly Expenses (excl. mortgage)</span><span class="detail-val" id="dExpenses">—</span></div>
+      <div class="detail-row"><span class="detail-label">Annual Net Cash Flow</span><span class="detail-val pos" id="dAnnualCf">—</span></div>
+      <div class="detail-row"><span class="detail-label">Gross Rent Multiplier</span><span class="detail-val" id="dGrm">—</span></div>
+      <div class="detail-row"><span class="detail-label">Your Target IRR</span><span class="detail-val" id="dTarget">—</span></div>
+      <div class="detail-row"><span class="detail-label">Hold Period</span><span class="detail-val" id="dHold">—</span></div>
+    </div>
+
+    <!-- YEAR BY YEAR -->
+    <div class="section-card">
+      <div class="section-head">
+        <span class="section-title">Year-by-Year Performance</span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="year-table">
+          <thead>
+            <tr>
+              <th style="text-align:left;">Year</th>
+              <th>Eff. Rent</th>
+              <th>Op. Expenses</th>
+              <th>Mortgage</th>
+              <th>Net Cash Flow</th>
+              <th>CoC Return</th>
+            </tr>
+          </thead>
+          <tbody id="yearTableBody">
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /content-col -->
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <div class="sidebar-card">
+      <div class="section-head">
+        <span class="section-title">Adjust Assumptions</span>
+      </div>
+
+      <div class="input-section">
+        <div class="input-section-title">Income</div>
+
+        <div class="edit-row">
+          <span class="edit-label">Monthly Rent</span>
+          <div class="edit-input-wrap">
+            <span class="edit-prefix">$</span>
+            <input type="number" class="edit-input has-prefix" id="e-monthlyRent" placeholder="2800"/>
+          </div>
+        </div>
+
+        <div class="edit-row">
+          <span class="edit-label">Vacancy Rate</span>
+          <div class="edit-input-wrap">
+            <input type="number" class="edit-input has-suffix" id="e-vacancyRate" placeholder="5" step="0.5"/>
+            <span class="edit-suffix">%</span>
+          </div>
+        </div>
+
+        <div class="edit-row">
+          <span class="edit-label">Annual Rent Growth</span>
+          <div class="edit-input-wrap">
+            <input type="number" class="edit-input has-suffix" id="e-rentGrowth" placeholder="3" step="0.5"/>
+            <span class="edit-suffix">%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="input-section">
+        <div class="input-section-title">Monthly Expenses</div>
+
+        <div class="edit-row">
+          <span class="edit-label">Property Taxes</span>
+          <div class="edit-input-wrap">
+            <span class="edit-prefix">$</span>
+            <input type="number" class="edit-input has-prefix" id="e-taxes" placeholder="400"/>
+          </div>
+        </div>
+
+        <div class="edit-row">
+          <span class="edit-label">Insurance</span>
+          <div class="edit-input-wrap">
+            <span class="edit-prefix">$</span>
+            <input type="number" class="edit-input has-prefix" id="e-insurance" placeholder="150"/>
+          </div>
+        </div>
+
+        <div class="edit-row">
+          <span class="edit-label">Property Mgmt</span>
+          <div class="edit-input-wrap">
+            <span class="edit-prefix">$</span>
+            <input type="number" class="edit-input has-prefix" id="e-mgmt" placeholder="0"/>
+          </div>
+        </div>
+
+        <div class="edit-row">
+          <span class="edit-label">Maintenance</span>
+          <div class="edit-input-wrap">
+            <span class="edit-prefix">$</span>
+            <input type="number" class="edit-input has-prefix" id="e-maintenance" placeholder="150"/>
+          </div>
+        </div>
+
+        <div class="edit-row">
+          <span class="edit-label">HOA</span>
+          <div class="edit-input-wrap">
+            <span class="edit-prefix">$</span>
+            <input type="number" class="edit-input has-prefix" id="e-hoa" placeholder="0"/>
+          </div>
+        </div>
+
+        <div class="edit-row">
+          <span class="edit-label">CapEx Reserve</span>
+          <div class="edit-input-wrap">
+            <span class="edit-prefix">$</span>
+            <input type="number" class="edit-input has-prefix" id="e-capex" placeholder="100"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="input-section">
+        <div class="input-section-title">Financing & Exit</div>
+
+        <div class="edit-row">
+          <span class="edit-label">Interest Rate</span>
+          <div class="edit-input-wrap">
+            <input type="number" class="edit-input has-suffix" id="e-interestRate" placeholder="7.25" step="0.125"/>
+            <span class="edit-suffix">%</span>
+          </div>
+        </div>
+
+        <div class="edit-row">
+          <span class="edit-label">Appreciation</span>
+          <div class="edit-input-wrap">
+            <input type="number" class="edit-input has-suffix" id="e-appreciation" placeholder="3" step="0.5"/>
+            <span class="edit-suffix">%</span>
+          </div>
+        </div>
+
+        <div class="edit-row">
+          <span class="edit-label">Selling Costs</span>
+          <div class="edit-input-wrap">
+            <input type="number" class="edit-input has-suffix" id="e-sellingCosts" placeholder="6" step="0.5"/>
+            <span class="edit-suffix">%</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="recalc-btn" onclick="recalculate()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 7a6 6 0 1 0 1.5-4M1 3v4h4"/></svg>
+        Recalculate
+      </button>
+    </div>
+
+    <div class="premium-card">
+      <div class="premium-eyebrow">YieldIQ Premium</div>
+      <div class="premium-title">How does this property compare to your market?</div>
+      <ul class="premium-features">
+        <li>Local rent comps by zip code</li>
+        <li>Rent gap analysis — money left on the table</li>
+        <li>Market vacancy & rent growth trends</li>
+        <li>Expense benchmarks vs. similar properties</li>
+        <li>Optimal hold/sell/refinance signal</li>
+      </ul>
+      <a href="/" class="premium-btn">Get Early Access</a>
+    </div>
+
+  </div><!-- /sidebar -->
+
+</div><!-- /main -->
+
+<div class="disclaimer">
+  This report is for informational purposes only and does not constitute financial or investment advice.<br/>
+  Always consult a licensed professional before making investment decisions. · <a href="/" style="color:var(--ink-muted);">YieldIQ</a>
+</div>
+
+<script>
+// ── MATH ENGINE ──────────────────────────────────────────────────────────────
+
+function calcMortgage(principal, annualRate, termYears, isIO) {
+  if (isIO) return principal * (annualRate / 100 / 12);
+  const r = annualRate / 100 / 12;
+  const n = termYears * 12;
+  if (r === 0) return principal / n;
+  return principal * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+}
+
+function calcIRR(cashflows, guess = 0.1) {
+  let rate = guess;
+  for (let i = 0; i < 200; i++) {
+    let npv = 0, dnpv = 0;
+    for (let t = 0; t < cashflows.length; t++) {
+      npv  += cashflows[t] / Math.pow(1 + rate, t);
+      dnpv -= t * cashflows[t] / Math.pow(1 + rate, t + 1);
+    }
+    const newRate = rate - npv / dnpv;
+    if (Math.abs(newRate - rate) < 1e-7) return newRate;
+    rate = newRate;
+  }
+  return rate;
+}
+
+function runAnalysis(d) {
+  const purchasePrice   = parseFloat(d.purchasePrice);
+  const downPct         = parseFloat(d.downPaymentPct) / 100;
+  const interestRate    = parseFloat(d.interestRate);
+  const loanTerm        = parseInt(d.loanTerm) || 30;
+  const isIO            = d.loanType === 'io';
+  const monthlyRent     = parseFloat(d.monthlyRent);
+  const vacancyRate     = parseFloat(d.vacancyRate || 5) / 100;
+  const rentGrowth      = parseFloat(d.rentGrowth || 3) / 100;
+  const appreciation    = parseFloat(d.appreciation || 3) / 100;
+  const taxes           = parseFloat(d.taxes || 0);
+  const insurance       = parseFloat(d.insurance || 0);
+  const hoa             = parseFloat(d.hoa || 0);
+  const maintenance     = parseFloat(d.maintenance || 0);
+  const mgmt            = parseFloat(d.mgmt || 0);
+  const other           = parseFloat(d.other || 0);
+  const capex           = parseFloat(d.capex || 0);
+  const holdPeriod      = parseInt(d.holdPeriod) || 10;
+  const targetReturn    = parseFloat(d.targetReturn || 10) / 100;
+  const sellingCostsPct = parseFloat(d.sellingCosts || 6) / 100;
+
+  const downPayment          = purchasePrice * downPct;
+  const loanAmount           = purchasePrice - downPayment;
+  const mortgage             = calcMortgage(loanAmount, interestRate, loanTerm, isIO);
+  const totalMonthlyExpenses = taxes + insurance + hoa + maintenance + mgmt + other + capex;
+  const effectiveRentYr1     = monthlyRent * 12 * (1 - vacancyRate);
+  const annualExpenses       = totalMonthlyExpenses * 12;
+  const annualMortgage       = mortgage * 12;
+  const annualCashflowYr1    = effectiveRentYr1 - annualExpenses - annualMortgage;
+  const monthlyCashflow      = annualCashflowYr1 / 12;
+  const cocReturn            = (annualCashflowYr1 / downPayment) * 100;
+  const grm                  = purchasePrice / (monthlyRent * 12);
+  const breakEvenMonthly     = (mortgage + totalMonthlyExpenses) / (1 - vacancyRate);
+
+  const flows = [-downPayment];
+  for (let yr = 1; yr <= holdPeriod; yr++) {
+    const rentThisYear = monthlyRent * 12 * Math.pow(1 + rentGrowth, yr - 1) * (1 - vacancyRate);
+    const cf = rentThisYear - annualExpenses - annualMortgage;
+    if (yr === holdPeriod) {
+      const exitPrice = purchasePrice * Math.pow(1 + appreciation, holdPeriod);
+      const exitCosts = exitPrice * sellingCostsPct;
+      let balance = loanAmount;
+      if (!isIO) {
+        const r = interestRate / 100 / 12;
+        const n = loanTerm * 12;
+        const paid = holdPeriod * 12;
+        balance = loanAmount * (Math.pow(1+r,n) - Math.pow(1+r,paid)) / (Math.pow(1+r,n) - 1);
+      }
+      flows.push(cf + exitPrice - exitCosts - balance);
+    } else { flows.push(cf); }
+  }
+
+  const irrPct = calcIRR(flows) * 100;
+
+  function cocAtPrice(price) {
+    const dp = price * downPct;
+    const loan = price - dp;
+    const mtg = calcMortgage(loan, interestRate, loanTerm, isIO);
+    const acf = effectiveRentYr1 - annualExpenses - (mtg * 12);
+    return acf / dp;
+  }
+  let lo = purchasePrice * 0.3, hi = purchasePrice * 2.5;
+  for (let i = 0; i < 60; i++) {
+    const mid = (lo + hi) / 2;
+    if (cocAtPrice(mid) > targetReturn) lo = mid; else hi = mid;
+  }
+  const maxPrice = (lo + hi) / 2;
+
+  const yearlyTable = [];
+  for (let yr = 1; yr <= Math.min(holdPeriod, 10); yr++) {
+    const rent = monthlyRent * 12 * Math.pow(1 + rentGrowth, yr - 1) * (1 - vacancyRate);
+    const cf   = rent - annualExpenses - annualMortgage;
+    const coc  = (cf / downPayment) * 100;
+    yearlyTable.push({ yr, rent: Math.round(rent), expenses: Math.round(annualExpenses), mortgage: Math.round(annualMortgage), cf: Math.round(cf), coc: coc.toFixed(2) });
+  }
+
+  return {
+    downPayment, loanAmount, mortgage, totalMonthlyExpenses,
+    effectiveRentYr1, annualCashflowYr1, monthlyCashflow,
+    cocReturn, grm, breakEvenMonthly, irrPct, maxPrice,
+    yearlyTable, targetReturnPct: targetReturn * 100, holdPeriod,
+    purchasePrice, interestRate, monthlyRent
+  };
+}
+
+// ── FORMATTING ───────────────────────────────────────────────────────────────
+
+function fmt(n)   { return '$' + Math.abs(Math.round(n)).toLocaleString(); }
+function fmtP(n)  { return parseFloat(n).toFixed(2) + '%'; }
+function fmtCF(n) { return (n >= 0 ? '+$' : '-$') + Math.abs(Math.round(n)).toLocaleString() + '/mo'; }
+
+// ── RENDER ───────────────────────────────────────────────────────────────────
+
+let globalData = {};
+
+function renderResults(d, r, isUpdate) {
+  globalData = d;
+
+  // Hero
+  document.getElementById('heroAddress').textContent = d.address || 'Your Property';
+  document.getElementById('heroMeta').textContent =
+    (d.propType || 'SFR').toUpperCase() + ' · ' +
+    (d.loanType || 'CONVENTIONAL').toUpperCase() + ' · ' +
+    r.holdPeriod + '-YEAR HOLD · ' +
+    d.downPaymentPct + '% DOWN';
+
+  // Verdict
+  const diff = r.irrPct - r.targetReturnPct;
+  const vBand = document.getElementById('verdictBand');
+  const vText = document.getElementById('verdictText');
+  const vSub  = document.getElementById('verdictSub');
+  const vIcon = document.getElementById('verdictIcon');
+
+  if (diff >= 1) {
+    vBand.className = 'verdict-band go';
+    vIcon.textContent = '✓';
+    vText.textContent = `GO — IRR of ${fmtP(r.irrPct)} exceeds your ${fmtP(r.targetReturnPct)} target by ${diff.toFixed(1)}%.`;
+    vSub.textContent  = `Max price to hit target: ${fmt(r.maxPrice)}`;
+  } else if (diff >= -1) {
+    vBand.className = 'verdict-band borderline';
+    vIcon.textContent = '⚡';
+    vText.textContent = `BORDERLINE — IRR of ${fmtP(r.irrPct)} is within 1% of your target. Consider negotiating the price.`;
+    vSub.textContent  = `Max price: ${fmt(r.maxPrice)}`;
+  } else {
+    vBand.className = 'verdict-band nogo';
+    vIcon.textContent = '✗';
+    vText.textContent = `NO-GO — IRR of ${fmtP(r.irrPct)} misses your ${fmtP(r.targetReturnPct)} target by ${Math.abs(diff).toFixed(1)}%.`;
+    vSub.textContent  = `Max price to hit target: ${fmt(r.maxPrice)}`;
+  }
+
+  // Metric cards
+  const cf = r.monthlyCashflow;
+  setText('mIrr', fmtP(r.irrPct));
+  setText('mIrrSub', `over ${r.holdPeriod}-year hold`);
+  setText('mCashflow', fmtCF(cf));
+  setText('mCoc', fmtP(r.cocReturn));
+  setText('mMortgage', fmt(r.mortgage) + '/mo');
+  setText('mBreakeven', fmt(r.breakEvenMonthly) + '/mo');
+  setText('mMaxprice', fmt(r.maxPrice));
+
+  document.getElementById('mCashflow').className = 'metric-value ' + (cf >= 0 ? 'positive' : 'negative');
+  document.getElementById('mCoc').className      = 'metric-value ' + (r.cocReturn >= r.targetReturnPct ? 'positive' : 'negative');
+  document.getElementById('cfCard').querySelector('.metric-label').parentElement.style.setProperty('--before-bg', cf >= 0 ? 'var(--success)' : 'var(--error)');
+
+  // Deal summary
+  setText('dPrice',    fmt(r.purchasePrice || d.purchasePrice));
+  setText('dDown',     fmt(r.downPayment) + ` (${d.downPaymentPct}%)`);
+  setText('dLoan',     fmt(r.loanAmount));
+  setText('dRate',     fmtP(r.interestRate || d.interestRate));
+  setText('dRent',     fmt(d.monthlyRent) + '/mo');
+  setText('dEffRent',  fmt(r.effectiveRentYr1) + '/yr');
+  setText('dExpenses', fmt(r.totalMonthlyExpenses) + '/mo');
+  setText('dAnnualCf', (r.annualCashflowYr1 >= 0 ? '+' : '') + fmt(r.annualCashflowYr1) + '/yr');
+  setText('dGrm',      r.grm.toFixed(1) + 'x');
+  setText('dTarget',   fmtP(r.targetReturnPct));
+  setText('dHold',     r.holdPeriod + ' years');
+
+  document.getElementById('dAnnualCf').className = 'detail-val ' + (r.annualCashflowYr1 >= 0 ? 'pos' : 'neg');
+
+  // Year table
+  const tbody = document.getElementById('yearTableBody');
+  tbody.innerHTML = r.yearlyTable.map(y => `
+    <tr>
+      <td>Year ${y.yr}</td>
+      <td>${fmt(y.rent)}</td>
+      <td>${fmt(y.expenses)}</td>
+      <td>${fmt(y.mortgage)}</td>
+      <td class="${y.cf >= 0 ? 'pos' : 'neg'}">${(y.cf >= 0 ? '+' : '') + fmt(y.cf)}</td>
+      <td class="${parseFloat(y.coc) >= r.targetReturnPct ? 'pos' : 'neg'}">${y.coc}%</td>
+    </tr>`).join('');
+
+  // Updated badge
+  if (isUpdate) {
+    const badge = document.getElementById('updatedBadge');
+    badge.classList.add('show');
+    setTimeout(() => badge.classList.remove('show'), 3000);
+  }
+}
+
+function setText(id, val) {
+  const el = document.getElementById(id);
+  if (el) { el.textContent = val; el.classList.add('pulse'); setTimeout(() => el.classList.remove('pulse'), 400); }
+}
+
+// ── RECALCULATE FROM SIDEBAR ─────────────────────────────────────────────────
+
+function recalculate() {
+  const d = Object.assign({}, globalData);
+
+  const fields = ['monthlyRent','vacancyRate','rentGrowth','taxes','insurance','mgmt','maintenance','hoa','capex','interestRate','appreciation','sellingCosts'];
+  fields.forEach(f => {
+    const el = document.getElementById('e-' + f);
+    if (el && el.value !== '') d[f] = el.value;
+  });
+
+  const r = runAnalysis(d);
+  renderResults(d, r, true);
+}
+
+// ── LOAD FROM URL PARAMS ──────────────────────────────────────────────────────
+
+function loadFromParams() {
+  const params = new URLSearchParams(window.location.search);
+  if (!params.has('p')) {
+    document.getElementById('heroAddress').textContent = 'No report data found.';
+    return;
+  }
+
+  try {
+    const d = JSON.parse(atob(params.get('p')));
+    const r = runAnalysis(d);
+    renderResults(d, r, false);
+
+    // Pre-fill sidebar inputs
+    const fields = ['monthlyRent','vacancyRate','rentGrowth','taxes','insurance','mgmt','maintenance','hoa','capex','interestRate','appreciation','sellingCosts'];
+    fields.forEach(f => {
+      const el = document.getElementById('e-' + f);
+      if (el && d[f] !== undefined) el.value = d[f];
+    });
+
+  } catch(e) {
+    document.getElementById('heroAddress').textContent = 'Error loading report data.';
+    console.error(e);
+  }
+}
+
+// Allow Enter key to trigger recalculate
+document.querySelectorAll('.edit-input').forEach(el => {
+  el.addEventListener('keydown', e => { if (e.key === 'Enter') recalculate(); });
+});
+
+loadFromParams();
+</script>
+</body>
+</html>
