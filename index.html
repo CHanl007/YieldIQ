@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>YieldIQ — Know What Your Property Is Really Earning</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --cream:        #f4efe6;
+    --cream-deep:   #ede6d8;
+    --cream-mid:    #e8e0d0;
+    --navy:         #0b1f3a;
+    --navy-mid:     #152d50;
+    --navy-light:   #1e3d6b;
+    --gold:         #b8922e;
+    --gold-bright:  #c9a84c;
+    --gold-light:   #d4b46a;
+    --gold-pale:    #f0e0b0;
+    --ink:          #1a2a3a;
+    --ink-mid:      #3a4e62;
+    --ink-muted:    #6a7f94;
+    --ink-faint:    #9aafbf;
+    --success:      #1a7a52;
+    --success-bg:   #e8f5ee;
+    --border:       rgba(11,31,58,0.1);
+    --border-gold:  rgba(184,146,46,0.25);
+    --shadow-sm:    0 1px 4px rgba(11,31,58,0.08);
+    --shadow-md:    0 4px 20px rgba(11,31,58,0.10);
+    --shadow-lg:    0 16px 48px rgba(11,31,58,0.14);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 60px;
+    height: 70px;
+    background: rgba(244,239,230,0.93);
+    backdrop-filter: blur(20px) saturate(150%);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .logo-iq { color: var(--gold); font-style: italic; }
+
+  .logo-mark {
+    width: 7px; height: 7px;
+    background: var(--gold);
+    border-radius: 50%;
+    margin-left: 3px;
+    margin-bottom: 14px;
+    animation: pulse-dot 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(184,146,46,0.5); }
+    50%       { opacity: 0.8; box-shadow: 0 0 0 5px rgba(184,146,46,0); }
+  }
+
+  .nav-links { display: flex; align-items: center; gap: 40px; }
+
+  nav a {
+    color: var(--ink-muted);
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  nav a:hover { color: var(--navy); }
+
+  .nav-cta {
+    background: var(--navy) !important;
+    color: var(--cream) !important;
+    padding: 9px 22px !important;
+    border-radius: 3px;
+    letter-spacing: 1px !important;
+    transition: background 0.2s, transform 0.15s !important;
+    border: none !important;
+  }
+
+  .nav-cta:hover {
+    background: var(--navy-mid) !important;
+    color: var(--gold-pale) !important;
+    transform: translateY(-1px);
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 160px 40px 100px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, var(--cream) 0%, var(--cream-deep) 100%);
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(11,31,58,0.07) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%);
+    pointer-events: none;
+  }
+
+  .hero-deco {
+    position: absolute;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28vw;
+    font-weight: 700;
+    color: rgba(11,31,58,0.024);
+    line-height: 1;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -48%);
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: -10px;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 860px;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--navy);
+    border-radius: 2px;
+    padding: 7px 18px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 44px;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .badge-dot {
+    width: 5px; height: 5px;
+    background: var(--gold-bright);
+    border-radius: 50%;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.2rem, 7vw, 6rem);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    color: var(--navy);
+    margin-bottom: 28px;
+    animation: fadeUp 0.8s 0.1s ease both;
+  }
+
+  h1 .accent { font-style: italic; color: var(--gold); }
+
+  h1 .underline-word {
+    position: relative;
+    display: inline-block;
+  }
+
+  h1 .underline-word::after {
+    content: '';
+    position: absolute;
+    bottom: 4px; left: 0; right: 0;
+    height: 2px;
+    background: var(--gold-bright);
+    opacity: 0.4;
+  }
+
+  .hero-sub {
+    font-size: 1.08rem;
+    color: var(--ink-mid);
+    line-height: 1.85;
+    max-width: 560px;
+    margin: 0 auto 56px;
+    font-weight: 400;
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+
+  /* ─── EMAIL FORM ─── */
+  .form-wrap {
+    animation: fadeUp 0.8s 0.3s ease both;
+    margin-bottom: 16px;
+  }
+
+  .email-form {
+    display: flex;
+    max-width: 500px;
+    margin: 0 auto;
+    border-radius: 3px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg), 0 0 0 1px var(--border-gold);
+  }
+
+  .email-form input {
+    flex: 1;
+    padding: 17px 22px;
+    background: #fff;
+    border: none;
+    outline: none;
+    color: var(--ink);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+  }
+
+  .email-form input::placeholder { color: var(--ink-faint); }
+
+  .email-form button {
+    padding: 17px 28px;
+    background: var(--navy);
+    border: none;
+    color: var(--cream);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+  }
+
+  .email-form button:hover { background: var(--navy-mid); }
+
+  .form-note {
+    font-size: 0.72rem;
+    color: var(--ink-faint);
+    letter-spacing: 0.5px;
+    animation: fadeUp 0.8s 0.4s ease both;
+    margin-top: 14px;
+  }
+
+  .success-msg {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: var(--success-bg);
+    border: 1px solid rgba(26,122,82,0.25);
+    border-radius: 3px;
+    padding: 14px 24px;
+    color: var(--success);
+    font-weight: 600;
+    font-size: 0.88rem;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  /* ─── STATS BAR ─── */
+  .stats-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 72px;
+    animation: fadeUp 0.8s 0.5s ease both;
+  }
+
+  .stats-outer {
+    display: flex;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: #fff;
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 44px;
+  }
+
+  .stat-item:not(:last-child) { border-right: 1px solid var(--border); }
+
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+
+  .stat-label {
+    font-size: 0.68rem;
+    color: var(--ink-muted);
+    margin-top: 6px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* ─── SECTION COMMONS ─── */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+
+  .section-label::before {
+    content: '';
+    width: 24px; height: 1px;
+    background: var(--gold);
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.5px;
+    color: var(--navy);
+    margin-bottom: 20px;
+  }
+
+  .section-title em { font-style: italic; color: var(--gold); }
+
+  .section-sub {
+    color: var(--ink-mid);
+    font-size: 1rem;
+    line-height: 1.8;
+    max-width: 520px;
+    font-weight: 400;
+  }
+
+  /* ─── PROBLEM ─── */
+  .problem-section {
+    padding: 120px 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .pain-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 64px;
+  }
+
+  .pain-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-top: 3px solid transparent;
+    border-radius: 3px;
+    padding: 40px 32px;
+    box-shadow: var(--shadow-sm);
+    transition: border-top-color 0.3s, box-shadow 0.3s, transform 0.3s;
+  }
+
+  .pain-card:hover {
+    border-top-color: var(--gold);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+  }
+
+  .pain-icon-wrap { width: 40px; height: 40px; margin-bottom: 24px; }
+
+  .pain-icon-wrap svg {
+    width: 40px; height: 40px;
+    stroke: var(--gold);
+    stroke-width: 1.5;
+  }
+
+  .pain-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--navy);
+  }
+
+  .pain-card p { font-size: 0.87rem; color: var(--ink-mid); line-height: 1.75; }
+
+  /* ─── FEATURES ─── */
+  .features-section {
+    background: var(--navy);
+    padding: 120px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .features-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+  }
+
+  .features-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1.05fr;
+    gap: 80px;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .features-section .section-label { color: var(--gold-bright); }
+  .features-section .section-label::before { background: var(--gold-bright); }
+  .features-section .section-title { color: #fff; }
+  .features-section .section-title em { color: var(--gold-bright); }
+
+  .feature-list { display: flex; flex-direction: column; margin-top: 48px; }
+
+  .feature-item {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    padding: 26px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    opacity: 0;
+    transform: translateX(-16px);
+    transition: opacity 0.55s, transform 0.55s;
+  }
+
+  .feature-item:first-child { border-top: 1px solid rgba(255,255,255,0.07); }
+  .feature-item.visible, .feature-item { opacity: 1; transform: translateX(0); }
+
+  .feature-icon-wrap {
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 2px;
+  }
+
+  .feature-icon-wrap svg {
+    width: 20px; height: 20px;
+    stroke: var(--gold-bright);
+    opacity: 0.85;
+    transition: opacity 0.2s;
+  }
+
+  .feature-item:hover .feature-icon-wrap svg { opacity: 1; }
+
+  .feature-text h3 {
+    font-weight: 600; font-size: 0.92rem; margin-bottom: 5px;
+    color: #fff; letter-spacing: 0.2px; transition: color 0.2s;
+  }
+
+  .feature-item:hover .feature-text h3 { color: var(--gold-light); }
+
+  .feature-text p { font-size: 0.84rem; color: rgba(255,255,255,0.42); line-height: 1.7; }
+
+  /* ─── DASHBOARD ─── */
+  .dashboard-wrap { position: relative; }
+
+  .dashboard-glow {
+    position: absolute; inset: -60px;
+    background: radial-gradient(ellipse 70% 50% at 50% 50%, rgba(201,168,76,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .mock-dashboard {
+    background: #fff;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.05);
+    position: relative; z-index: 1;
+  }
+
+  .dash-titlebar {
+    background: #f8f6f2;
+    border-bottom: 1px solid rgba(11,31,58,0.09);
+    padding: 11px 18px;
+    display: flex; align-items: center; gap: 7px;
+  }
+
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: rgba(255,96,96,0.7); }
+  .dot-y { background: rgba(255,189,64,0.7); }
+  .dot-g { background: rgba(52,211,153,0.7); }
+
+  .dash-app-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem; color: var(--ink-muted);
+    margin-left: 8px; letter-spacing: 0.5px;
+  }
+
+  .dash-body { padding: 22px; }
+
+  .dash-property-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 18px; padding-bottom: 14px;
+    border-bottom: 1px solid rgba(11,31,58,0.07);
+  }
+
+  .dash-address { font-size: 0.82rem; font-weight: 600; color: var(--navy); }
+  .dash-address-sub { font-size: 0.68rem; color: var(--ink-muted); margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+
+  .dash-verdict-pill {
+    background: var(--success-bg); border: 1px solid rgba(26,122,82,0.3);
+    color: var(--success); font-size: 0.63rem; font-weight: 700;
+    padding: 5px 12px; border-radius: 2px; letter-spacing: 1.5px; text-transform: uppercase;
+  }
+
+  .dash-metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
+
+  .metric-box {
+    background: var(--cream); border: 1px solid var(--border);
+    border-radius: 5px; padding: 13px 15px;
+    position: relative; overflow: hidden;
+  }
+
+  .metric-box::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(184,146,46,0.35), transparent);
+  }
+
+  .metric-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.6rem;
+    color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 7px;
+  }
+
+  .metric-value {
+    font-family: 'Cormorant Garamond', serif; font-size: 1.55rem;
+    font-weight: 700; color: var(--navy); line-height: 1; letter-spacing: -0.5px;
+  }
+
+  .metric-delta { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--success); margin-top: 4px; }
+
+  .sparkline { position: absolute; right: 10px; bottom: 10px; opacity: 0.3; }
+
+  .dash-gauge {
+    background: var(--cream); border: 1px solid var(--border);
+    border-radius: 5px; padding: 13px 15px; margin-bottom: 10px;
+  }
+
+  .gauge-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+
+  .gauge-label { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.8px; }
+  .gauge-val { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--success); font-weight: 500; }
+
+  .gauge-track { height: 4px; background: var(--cream-mid); border-radius: 2px; overflow: hidden; }
+
+  .gauge-fill {
+    height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+    border-radius: 2px; transition: width 1.5s cubic-bezier(0.4,0,0.2,1); width: 0%;
+  }
+
+  .dash-verdict-bar {
+    background: var(--success-bg); border: 1px solid rgba(26,122,82,0.2);
+    border-radius: 5px; padding: 12px 15px; display: flex; align-items: center; gap: 10px;
+  }
+
+  .verdict-check {
+    width: 20px; height: 20px; background: rgba(26,122,82,0.15);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+
+  .verdict-check svg { width: 10px; height: 10px; stroke: var(--success); stroke-width: 2.5; }
+  .verdict-main { font-size: 0.77rem; font-weight: 600; color: var(--success); }
+  .verdict-detail { font-size: 0.67rem; color: var(--ink-muted); margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+
+  /* ─── HOW IT WORKS ─── */
+  .how-section { padding: 120px 60px; max-width: 1200px; margin: 0 auto; }
+
+  .how-header { text-align: center; margin-bottom: 72px; }
+  .how-header .section-label { justify-content: center; }
+  .how-header .section-label::before { display: none; }
+  .how-header .section-label::after { content: ''; width: 24px; height: 1px; background: var(--gold); }
+
+  .steps-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+  .step {
+    background: #fff; border: 1px solid var(--border); border-radius: 3px;
+    padding: 44px 36px; box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.3s, transform 0.3s;
+    position: relative; overflow: hidden;
+  }
+
+  .step::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+    height: 2px; background: linear-gradient(90deg, transparent, var(--gold-bright), transparent);
+    transform: scaleX(0); transition: transform 0.35s;
+  }
+
+  .step:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+  .step:hover::after { transform: scaleX(1); }
+
+  .step-num {
+    font-family: 'Cormorant Garamond', serif; font-size: 4rem; font-weight: 700;
+    color: rgba(11,31,58,0.07); line-height: 1; letter-spacing: -3px;
+    margin-bottom: 20px; transition: color 0.3s;
+  }
+
+  .step:hover .step-num { color: rgba(184,146,46,0.18); }
+
+  .step h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; margin-bottom: 12px; color: var(--navy); }
+  .step p { font-size: 0.86rem; color: var(--ink-mid); line-height: 1.75; }
+
+  /* ─── CTA ─── */
+  .cta-section { padding: 0 60px 120px; }
+
+  .cta-inner {
+    max-width: 1200px; margin: 0 auto; background: var(--navy);
+    border-radius: 6px; padding: 100px 60px; text-align: center;
+    position: relative; overflow: hidden; box-shadow: var(--shadow-lg);
+  }
+
+  .cta-inner::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(201,168,76,0.08) 0%, transparent 70%);
+  }
+
+  .cta-inner::after {
+    content: ''; position: absolute; top: 24px; right: 24px;
+    width: 40px; height: 40px;
+    border-top: 1px solid rgba(201,168,76,0.3); border-right: 1px solid rgba(201,168,76,0.3);
+  }
+
+  .cta-corner-bl {
+    position: absolute; bottom: 24px; left: 24px;
+    width: 40px; height: 40px;
+    border-bottom: 1px solid rgba(201,168,76,0.3); border-left: 1px solid rgba(201,168,76,0.3);
+  }
+
+  .cta-content { position: relative; z-index: 2; }
+
+  .cta-inner h2 {
+    font-family: 'Cormorant Garamond', serif; font-size: clamp(2.4rem, 5vw, 3.8rem);
+    font-weight: 600; line-height: 1.1; letter-spacing: -1px; color: #fff; margin-bottom: 16px;
+  }
+
+  .cta-inner h2 em { font-style: italic; color: var(--gold-bright); }
+  .cta-inner .lead { color: rgba(255,255,255,0.5); font-size: 1rem; margin-bottom: 44px; }
+
+  .cta-inner .email-form input { background: rgba(255,255,255,0.08); color: #fff; }
+  .cta-inner .email-form input::placeholder { color: rgba(255,255,255,0.3); }
+  .cta-inner .email-form button { background: var(--gold); color: var(--navy); }
+  .cta-inner .email-form button:hover { background: var(--gold-light); }
+  .cta-inner .email-form { box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 0 1px rgba(201,168,76,0.25); }
+  .cta-inner .form-note { color: rgba(255,255,255,0.28); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid var(--border); padding: 32px 60px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--cream);
+  }
+
+  footer .logo { font-size: 1.3rem; }
+  .footer-copy { font-size: 0.74rem; color: var(--ink-faint); }
+  .footer-tagline { font-size: 0.68rem; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; opacity: 0.7; }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-up {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  /* Fallback: if JS observer never fires, show everything */
+  .no-js .fade-up, .fade-up { opacity: 1; transform: translateY(0); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 960px) {
+    nav { padding: 0 24px; }
+    .nav-links { gap: 20px; }
+    .problem-section, .how-section { padding: 80px 24px; }
+    .features-section { padding: 80px 24px; }
+    .features-inner { grid-template-columns: 1fr; gap: 60px; }
+    .pain-grid { grid-template-columns: 1fr; }
+    .steps-row { grid-template-columns: 1fr; }
+    .stat-item { padding: 18px 24px; }
+    .stats-outer { flex-wrap: wrap; }
+    .cta-section { padding: 0 20px 80px; }
+    .cta-inner { padding: 60px 28px; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Yield<span class="logo-iq">IQ</span><span class="logo-mark"></span></div>
+  <div class="nav-links">
+    <a href="#problem">Problem</a>
+    <a href="#features">Product</a>
+    <a href="#how">How It Works</a>
+    <a href="#early-access" class="nav-cta">Early Access</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-deco">Y</div>
+  <div class="hero-content">
+    <div class="hero-badge"><span class="badge-dot"></span>Early Access Now Open</div>
+    <h1>Finally know what your<br/>property is <span class="accent"><span class="underline-word">really</span> earning</span></h1>
+    <p class="hero-sub">YieldIQ gives everyday real estate investors the same analytical power as institutional firms — so you can buy smarter, track yield monthly, and know exactly when to hold or sell.</p>
+
+    <div class="form-wrap">
+      <form action="https://yieldiq.us4.list-manage.com/subscribe/post?u=d2a86bb0bee865132874d1f39&amp;id=47a200fbc6&amp;f_id=00e9c2e1f0" method="post" id="heroForm" name="mc-embedded-subscribe-form" target="_blank" novalidate>
+        <div class="email-form">
+          <input type="email" name="EMAIL" id="heroEmail" placeholder="Enter your email address" required />
+          <div style="position:absolute;left:-5000px;" aria-hidden="true"><input type="text" name="b_d2a86bb0bee865132874d1f39_47a200fbc6" tabindex="-1" value=""></div>
+          <button type="submit" name="subscribe">Get Early Access</button>
+        </div>
+      </form>
+    </div>
+    <div class="success-msg" id="heroSuccess">✓ &nbsp; You're on the list. We'll be in touch.</div>
+    <p class="form-note">Free to join · No credit card · Unsubscribe anytime</p>
+
+    <div class="stats-bar">
+      <div class="stats-outer">
+        <div class="stat-item"><div class="stat-num">$2.3T</div><div class="stat-label">Non-institutional RE owned</div></div>
+        <div class="stat-item"><div class="stat-num">73%</div><div class="stat-label">Investors not tracking IRR</div></div>
+        <div class="stat-item"><div class="stat-num">1 in 3</div><div class="stat-label">Properties underperforming</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="problem-section" id="problem">
+  <div class="fade-up">
+    <div class="section-label">The Problem</div>
+    <h2 class="section-title">Most real estate investors<br/>are flying <em>blind</em></h2>
+    <p class="section-sub">You own the property. But do you actually know what it's yielding? Most investors don't — and it's quietly costing them.</p>
+  </div>
+  <div class="pain-grid">
+    <div class="pain-card fade-up">
+      <div class="pain-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+      <h3>Buying on gut feeling</h3>
+      <p>Without a clear required rate of return or IRR analysis, most investors overpay or miss great opportunities entirely.</p>
+    </div>
+    <div class="pain-card fade-up">
+      <div class="pain-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      <h3>No yield tracking</h3>
+      <p>After closing, most investors have no system to monitor NOI, cash-on-cash return, or equity growth month over month.</p>
+    </div>
+    <div class="pain-card fade-up">
+      <div class="pain-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+      <h3>Not knowing when to sell</h3>
+      <p>Is your property still the best use of your capital? Without data, you'll never know if you should hold, refinance, or exit.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<div class="features-section" id="features">
+  <div class="features-inner">
+    <div>
+      <div class="section-label fade-up">What YieldIQ Does</div>
+      <h2 class="section-title fade-up">Institutional-grade analysis.<br/><em>Built for real investors.</em></h2>
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+          <div class="feature-text"><h3>Pre-Purchase Decision Engine</h3><p>Input any property and get your IRR, cap rate, NPV, and a clear Go/No-Go recommendation based on your personal required return.</p></div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+          <div class="feature-text"><h3>Monthly Yield Tracker</h3><p>Log actual rent, expenses, and vacancy each month. YieldIQ compares actuals vs. projections and updates your running IRR automatically.</p></div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
+          <div class="feature-text"><h3>Hold · Sell · Refinance Optimizer</h3><p>At any point, YieldIQ tells you whether current market conditions favor holding, selling, or refinancing — backed by real data.</p></div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div class="feature-text"><h3>Live Market Intelligence</h3><p>Track local cap rates, rent trends, and comparable sales in your market so you always know where your property stands.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-wrap fade-up">
+      <div class="dashboard-glow"></div>
+      <div class="mock-dashboard">
+        <div class="dash-titlebar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="dash-app-name">yieldiq — property analysis</span>
+        </div>
+        <div class="dash-body">
+          <div class="dash-property-bar">
+            <div>
+              <div class="dash-address">123 Main St, Miami Beach</div>
+              <div class="dash-address-sub">19-unit multifamily · 8yr hold · IO loan</div>
+            </div>
+            <div class="dash-verdict-pill">✓ Strong Buy</div>
+          </div>
+          <div class="dash-metrics">
+            <div class="metric-box">
+              <div class="metric-label">Levered IRR</div>
+              <div class="metric-value">11.4%</div>
+              <div class="metric-delta">↑ +0.2% above target</div>
+              <svg class="sparkline" width="48" height="20" viewBox="0 0 48 20"><polyline points="0,18 8,14 16,16 24,10 32,8 40,5 48,3" fill="none" stroke="#b8922e" stroke-width="1.5"/></svg>
+            </div>
+            <div class="metric-box">
+              <div class="metric-label">Going-In Cap Rate</div>
+              <div class="metric-value">6.08%</div>
+              <div class="metric-delta">↑ Market avg: 5.5%</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-label">Year 1 NOI</div>
+              <div class="metric-value">$346K</div>
+              <div class="metric-delta">↑ On track</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-label">Max Purchase Price</div>
+              <div class="metric-value">$5.73M</div>
+              <div class="metric-delta">Ask: $5.70M ✓</div>
+            </div>
+          </div>
+          <div class="dash-gauge">
+            <div class="gauge-header">
+              <span class="gauge-label">Return vs. Required (11.2% target)</span>
+              <span class="gauge-val">101.8%</span>
+            </div>
+            <div class="gauge-track"><div class="gauge-fill" id="gaugeBar"></div></div>
+          </div>
+          <div class="dash-verdict-bar">
+            <div class="verdict-check"><svg viewBox="0 0 12 12" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></div>
+            <div class="verdict-copy">
+              <div class="verdict-main">Investment exceeds your required return</div>
+              <div class="verdict-detail">Negotiate to $5.4M–$5.5M for stronger margin of safety</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="how">
+  <div class="how-header fade-up">
+    <div class="section-label">How It Works</div>
+    <h2 class="section-title">Three steps to smarter investing</h2>
+  </div>
+  <div class="steps-row">
+    <div class="step fade-up">
+      <div class="step-num">01</div>
+      <h3>Enter Your Property</h3>
+      <p>Input the purchase price, rents, expenses, and financing terms. YieldIQ walks you through every assumption with plain-English guidance.</p>
+    </div>
+    <div class="step fade-up">
+      <div class="step-num">02</div>
+      <h3>Get Your Analysis</h3>
+      <p>Instantly see your IRR, cap rate, NPV, maximum purchase price, and a clear investment recommendation — no spreadsheet required.</p>
+    </div>
+    <div class="step fade-up">
+      <div class="step-num">03</div>
+      <h3>Track & Optimize</h3>
+      <p>After closing, log monthly performance and let YieldIQ tell you how your yield is trending and what to do next.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta-section" id="early-access">
+  <div class="cta-inner">
+    <div class="cta-corner-bl"></div>
+    <div class="cta-content">
+      <h2 class="fade-up">Be the first to know<br/>when <em>YieldIQ</em> launches</h2>
+      <p class="lead fade-up">Join investors already on the early access list.</p>
+      <div class="form-wrap fade-up">
+        <form action="https://yieldiq.us4.list-manage.com/subscribe/post?u=d2a86bb0bee865132874d1f39&amp;id=47a200fbc6&amp;f_id=00e9c2e1f0" method="post" name="mc-embedded-subscribe-form" target="_blank" novalidate style="position:relative;">
+          <div class="email-form" id="ctaForm">
+            <input type="email" name="EMAIL" id="ctaEmail" placeholder="Enter your email address" required />
+            <div style="position:absolute;left:-5000px;" aria-hidden="true"><input type="text" name="b_d2a86bb0bee865132874d1f39_47a200fbc6" tabindex="-1" value=""></div>
+            <button type="submit" name="subscribe">Get Early Access</button>
+          </div>
+        </form>
+      </div>
+      <div class="success-msg" id="ctaSuccess" style="margin: 16px auto 0; max-width: 500px;">✓ &nbsp; You're on the list. We'll be in touch.</div>
+      <p class="form-note fade-up" style="margin-top: 14px;">Free to join · No spam · Unsubscribe anytime</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">Yield<span class="logo-iq">IQ</span></div>
+  <p class="footer-copy">© 2026 YieldIQ. All rights reserved.</p>
+  <p class="footer-tagline">Built for real investors</p>
+</footer>
+
+<script src="//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js"></script>
+<script>
+  (function($) {
+    window.fnames = new Array(); window.ftypes = new Array();
+    fnames[0]='EMAIL'; ftypes[0]='email';
+  }(jQuery));
+  var $mcj = jQuery.noConflict(true);
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), entry.target.dataset.delay || 0);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.fade-up, .feature-item').forEach((el, i) => {
+    el.dataset.delay = (i % 4) * 80;
+    observer.observe(el);
+  });
+
+  const dashObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        setTimeout(() => {
+          const bar = document.getElementById('gaugeBar');
+          if (bar) bar.style.width = '82%';
+        }, 400);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  const dash = document.querySelector('.mock-dashboard');
+  if (dash) dashObs.observe(dash);
+</script>
+</body>
+</html>
