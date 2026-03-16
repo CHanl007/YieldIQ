@@ -137,145 +137,141 @@ function fmt(n)    { return '$' + Math.round(n).toLocaleString(); }
 function fmtP(n)   { return parseFloat(n).toFixed(2) + '%'; }
 function fmtCF(n)  { return (n >= 0 ? '+' : '') + fmt(n) + '/mo'; }
 
-function buildEmail(d, r) {
-  const rows = r.yearlyTable.map(y => `
-    <tr>
-      <td style="padding:10px 14px; border-bottom:1px solid #eee; font-family:'JetBrains Mono',monospace; font-size:13px; color:#4a5e72;">Year ${y.yr}</td>
-      <td style="padding:10px 14px; border-bottom:1px solid #eee; font-family:'JetBrains Mono',monospace; font-size:13px; text-align:right;">${fmt(y.rent)}</td>
-      <td style="padding:10px 14px; border-bottom:1px solid #eee; font-family:'JetBrains Mono',monospace; font-size:13px; text-align:right; color:${y.cf >= 0 ? '#1a7a52' : '#c0392b'};">${(y.cf >= 0 ? '+' : '') + fmt(y.cf)}</td>
-      <td style="padding:10px 14px; border-bottom:1px solid #eee; font-family:'JetBrains Mono',monospace; font-size:13px; text-align:right; color:${parseFloat(y.coc) >= r.targetReturnPct ? '#1a7a52' : '#c0392b'};">${y.coc}%</td>
-    </tr>`).join('');
+function buildReportUrl(d) {
+  try {
+    const encoded = Buffer.from(JSON.stringify(d)).toString('base64');
+    return `https://yieldiq.co/report.html?p=${encoded}`;
+  } catch(e) { return 'https://yieldiq.co'; }
+}
+
+function buildEmail(d, r, reportUrl) {
+  const verdictColor = r.verdictColor;
+  const verdictBg    = r.verdictBg;
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>YieldIQ Property Report</title>
+<title>Your YieldIQ Property Report</title>
 </head>
-<body style="margin:0; padding:0; background:#f4efe6; font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+<body style="margin:0;padding:0;background:#f0ebe2;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
 
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4efe6; padding:40px 20px;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f0ebe2;padding:32px 16px;">
 <tr><td align="center">
-<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px; width:100%;">
+<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
 
   <!-- HEADER -->
-  <tr><td style="background:#0b1f3a; border-radius:8px 8px 0 0; padding:32px 40px;">
-    <table width="100%" cellpadding="0" cellspacing="0">
-      <tr>
-        <td>
-          <span style="font-family:Georgia,serif; font-size:26px; font-weight:700; color:#ffffff; letter-spacing:0.3px;">
-            Yield<em style="color:#c9a84c; font-style:italic;">IQ</em>
-          </span>
-        </td>
-        <td align="right">
-          <span style="font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#7a90a8;">Property Analysis Report</span>
-        </td>
-      </tr>
-    </table>
+  <tr><td style="background:#0b1f3a;border-radius:10px 10px 0 0;padding:28px 40px 24px;">
+    <table width="100%" cellpadding="0" cellspacing="0"><tr>
+      <td><span style="font-family:Georgia,'Times New Roman',serif;font-size:24px;font-weight:700;color:#fff;letter-spacing:-0.3px;">Yield<em style="color:#c9a84c;font-style:italic;">IQ</em></span><span style="display:inline-block;width:5px;height:5px;background:#c9a84c;border-radius:50%;margin-left:3px;vertical-align:super;"></span></td>
+      <td align="right"><span style="font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,0.35);">Property Report</span></td>
+    </tr></table>
   </td></tr>
 
-  <!-- PROPERTY BANNER -->
-  <tr><td style="background:#122847; padding:20px 40px; border-bottom:2px solid #c9a84c;">
-    <p style="margin:0; font-size:18px; font-weight:600; color:#ffffff;">${d.address}</p>
-    <p style="margin:4px 0 0; font-size:12px; color:#7a90a8; font-family:'Courier New',monospace; letter-spacing:0.5px;">${d.propType.toUpperCase()} · ${d.holdPeriod}-YEAR HOLD · ${d.loanType.toUpperCase()} LOAN</p>
+  <!-- PROPERTY BAND -->
+  <tr><td style="background:#122847;padding:20px 40px;border-bottom:3px solid #c9a84c;">
+    <p style="margin:0 0 4px;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.35);">Investment Property Analysis</p>
+    <p style="margin:0 0 6px;font-size:20px;font-weight:700;color:#fff;line-height:1.2;">${d.address}</p>
+    <p style="margin:0;font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:0.5px;font-family:'Courier New',monospace;">${(d.propType||'SFR').toUpperCase()} &nbsp;·&nbsp; ${(d.loanType||'CONVENTIONAL').toUpperCase()} LOAN &nbsp;·&nbsp; ${d.holdPeriod}-YEAR HOLD &nbsp;·&nbsp; ${d.downPaymentPct}% DOWN</p>
   </td></tr>
 
-  <!-- VERDICT BAR -->
-  <tr><td style="background:${r.verdictBg}; border:2px solid ${r.verdictColor}33; padding:20px 40px;">
-    <p style="margin:0; font-size:14px; font-weight:700; color:${r.verdictColor}; letter-spacing:0.3px;">${r.verdict}</p>
+  <!-- VERDICT -->
+  <tr><td style="background:${verdictBg};padding:16px 40px;border-left:4px solid ${verdictColor};">
+    <p style="margin:0;font-size:13px;font-weight:700;color:${verdictColor};line-height:1.5;">${r.verdict}</p>
   </td></tr>
 
-  <!-- MAIN METRICS -->
-  <tr><td style="background:#ffffff; padding:32px 40px;">
-    <p style="margin:0 0 20px; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#9aafbf;">Key Metrics</p>
-    <table width="100%" cellpadding="0" cellspacing="0">
+  <!-- HERO METRICS -->
+  <tr><td style="background:#fff;padding:32px 40px 24px;">
+
+    <p style="margin:0 0 18px;font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#9aafbf;">Key Results</p>
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:8px;">
       <tr>
-        <td width="50%" style="padding-bottom:16px; padding-right:12px;">
-          <div style="background:#f7f9fb; border:1px solid #e0e7ee; border-radius:6px; padding:16px;">
-            <p style="margin:0 0 6px; font-size:10px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:#7a90a8; font-family:'Courier New',monospace;">Monthly Cash Flow</p>
-            <p style="margin:0; font-size:24px; font-weight:700; color:${r.monthlyCashflow >= 0 ? '#1a7a52' : '#c0392b'}; font-family:Georgia,serif;">${fmtCF(r.monthlyCashflow)}</p>
+        <td width="33%" style="padding-right:8px;padding-bottom:12px;">
+          <div style="background:#f7f9fb;border:1px solid #e8eef4;border-radius:8px;border-top:3px solid #b8922e;padding:16px 14px;">
+            <p style="margin:0 0 6px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#9aafbf;font-family:'Courier New',monospace;">Levered IRR</p>
+            <p style="margin:0;font-size:22px;font-weight:700;color:#b8922e;font-family:Georgia,serif;line-height:1;">${fmtP(r.irrPct)}</p>
+            <p style="margin:4px 0 0;font-size:10px;color:#9aafbf;">over ${r.holdPeriod} years</p>
           </div>
         </td>
-        <td width="50%" style="padding-bottom:16px; padding-left:12px;">
-          <div style="background:#f7f9fb; border:1px solid #e0e7ee; border-radius:6px; padding:16px;">
-            <p style="margin:0 0 6px; font-size:10px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:#7a90a8; font-family:'Courier New',monospace;">Levered IRR</p>
-            <p style="margin:0; font-size:24px; font-weight:700; color:#b8922e; font-family:Georgia,serif;">${fmtP(r.irrPct)}</p>
+        <td width="33%" style="padding-right:8px;padding-bottom:12px;">
+          <div style="background:#f7f9fb;border:1px solid #e8eef4;border-radius:8px;border-top:3px solid ${r.monthlyCashflow >= 0 ? '#1a7a52' : '#c0392b'};padding:16px 14px;">
+            <p style="margin:0 0 6px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#9aafbf;font-family:'Courier New',monospace;">Monthly Cash Flow</p>
+            <p style="margin:0;font-size:22px;font-weight:700;color:${r.monthlyCashflow >= 0 ? '#1a7a52' : '#c0392b'};font-family:Georgia,serif;line-height:1;">${fmtCF(r.monthlyCashflow)}</p>
+            <p style="margin:4px 0 0;font-size:10px;color:#9aafbf;">after all expenses</p>
+          </div>
+        </td>
+        <td width="33%" style="padding-bottom:12px;">
+          <div style="background:#f7f9fb;border:1px solid #e8eef4;border-radius:8px;border-top:3px solid ${r.cocReturn >= r.targetReturnPct ? '#1a7a52' : '#9aafbf'};padding:16px 14px;">
+            <p style="margin:0 0 6px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#9aafbf;font-family:'Courier New',monospace;">Cash-on-Cash</p>
+            <p style="margin:0;font-size:22px;font-weight:700;color:${r.cocReturn >= r.targetReturnPct ? '#1a7a52' : '#4a5e72'};font-family:Georgia,serif;line-height:1;">${fmtP(r.cocReturn)}</p>
+            <p style="margin:4px 0 0;font-size:10px;color:#9aafbf;">year 1 return</p>
           </div>
         </td>
       </tr>
       <tr>
-        <td width="50%" style="padding-right:12px;">
-          <div style="background:#f7f9fb; border:1px solid #e0e7ee; border-radius:6px; padding:16px;">
-            <p style="margin:0 0 6px; font-size:10px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:#7a90a8; font-family:'Courier New',monospace;">Cash-on-Cash Return</p>
-            <p style="margin:0; font-size:24px; font-weight:700; color:${r.cocReturn >= r.targetReturnPct ? '#1a7a52' : '#c0392b'}; font-family:Georgia,serif;">${fmtP(r.cocReturn)}</p>
+        <td width="33%" style="padding-right:8px;padding-bottom:12px;">
+          <div style="background:#f7f9fb;border:1px solid #e8eef4;border-radius:8px;padding:14px;">
+            <p style="margin:0 0 4px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#9aafbf;font-family:'Courier New',monospace;">Monthly Mortgage</p>
+            <p style="margin:0;font-size:16px;font-weight:600;color:#0b1f3a;font-family:Georgia,serif;">${fmt(r.mortgage)}</p>
           </div>
         </td>
-        <td width="50%" style="padding-left:12px;">
-          <div style="background:#f7f9fb; border:1px solid #e0e7ee; border-radius:6px; padding:16px;">
-            <p style="margin:0 0 6px; font-size:10px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:#7a90a8; font-family:'Courier New',monospace;">Max Purchase Price</p>
-            <p style="margin:0; font-size:24px; font-weight:700; color:#0b1f3a; font-family:Georgia,serif;">${fmt(r.maxPrice)}</p>
+        <td width="33%" style="padding-right:8px;padding-bottom:12px;">
+          <div style="background:#f7f9fb;border:1px solid #e8eef4;border-radius:8px;padding:14px;">
+            <p style="margin:0 0 4px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#9aafbf;font-family:'Courier New',monospace;">Break-Even Rent</p>
+            <p style="margin:0;font-size:16px;font-weight:600;color:#0b1f3a;font-family:Georgia,serif;">${fmt(r.breakEvenMonthly)}/mo</p>
+          </div>
+        </td>
+        <td width="33%" style="padding-bottom:12px;">
+          <div style="background:#f7f9fb;border:1px solid #e8eef4;border-radius:8px;padding:14px;">
+            <p style="margin:0 0 4px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#9aafbf;font-family:'Courier New',monospace;">Max Price</p>
+            <p style="margin:0;font-size:16px;font-weight:600;color:#0b1f3a;font-family:Georgia,serif;">${fmt(r.maxPrice)}</p>
           </div>
         </td>
       </tr>
     </table>
 
-    <!-- DETAIL TABLE -->
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:24px; border:1px solid #e0e7ee; border-radius:6px; overflow:hidden;">
-      <tr style="background:#f7f9fb;">
-        <td style="padding:10px 14px; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#9aafbf;">Metric</td>
-        <td style="padding:10px 14px; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#9aafbf; text-align:right;">Value</td>
-      </tr>
-      <tr><td style="padding:10px 14px; border-top:1px solid #eee; font-size:13px; color:#4a5e72;">Monthly Mortgage Payment</td><td style="padding:10px 14px; border-top:1px solid #eee; font-family:'Courier New',monospace; font-size:13px; text-align:right;">${fmt(r.mortgage)}</td></tr>
-      <tr><td style="padding:10px 14px; border-top:1px solid #eee; font-size:13px; color:#4a5e72;">Monthly Operating Expenses</td><td style="padding:10px 14px; border-top:1px solid #eee; font-family:'Courier New',monospace; font-size:13px; text-align:right;">${fmt(r.totalMonthlyExpenses)}</td></tr>
-      <tr><td style="padding:10px 14px; border-top:1px solid #eee; font-size:13px; color:#4a5e72;">Effective Annual Rent (after vacancy)</td><td style="padding:10px 14px; border-top:1px solid #eee; font-family:'Courier New',monospace; font-size:13px; text-align:right;">${fmt(r.effectiveRentYr1)}</td></tr>
-      <tr><td style="padding:10px 14px; border-top:1px solid #eee; font-size:13px; color:#4a5e72;">Break-Even Monthly Rent</td><td style="padding:10px 14px; border-top:1px solid #eee; font-family:'Courier New',monospace; font-size:13px; text-align:right;">${fmt(r.breakEvenMonthly)}</td></tr>
-      <tr><td style="padding:10px 14px; border-top:1px solid #eee; font-size:13px; color:#4a5e72;">Gross Rent Multiplier</td><td style="padding:10px 14px; border-top:1px solid #eee; font-family:'Courier New',monospace; font-size:13px; text-align:right;">${r.grm.toFixed(1)}x</td></tr>
-      <tr><td style="padding:10px 14px; border-top:1px solid #eee; font-size:13px; color:#4a5e72;">Down Payment</td><td style="padding:10px 14px; border-top:1px solid #eee; font-family:'Courier New',monospace; font-size:13px; text-align:right;">${fmt(r.downPayment)}</td></tr>
-      <tr><td style="padding:10px 14px; border-top:1px solid #eee; font-size:13px; color:#4a5e72;">Loan Amount</td><td style="padding:10px 14px; border-top:1px solid #eee; font-family:'Courier New',monospace; font-size:13px; text-align:right;">${fmt(r.loanAmount)}</td></tr>
-      <tr><td style="padding:10px 14px; border-top:1px solid #eee; font-size:13px; color:#4a5e72;">Your Target IRR</td><td style="padding:10px 14px; border-top:1px solid #eee; font-family:'Courier New',monospace; font-size:13px; text-align:right;">${fmtP(r.targetReturnPct)}</td></tr>
+    <!-- DEAL DETAILS -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e8eef4;border-radius:8px;overflow:hidden;margin-bottom:24px;">
+      <tr style="background:#f7f9fb;"><td colspan="2" style="padding:10px 16px;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#9aafbf;">Deal Summary</td></tr>
+      <tr style="border-top:1px solid #eef2f6;"><td style="padding:10px 16px;font-size:12px;color:#4a5e72;border-bottom:1px solid #eef2f6;">Purchase Price</td><td style="padding:10px 16px;font-size:12px;font-family:'Courier New',monospace;text-align:right;border-bottom:1px solid #eef2f6;">${fmt(parseFloat(d.purchasePrice))}</td></tr>
+      <tr><td style="padding:10px 16px;font-size:12px;color:#4a5e72;border-bottom:1px solid #eef2f6;">Down Payment</td><td style="padding:10px 16px;font-size:12px;font-family:'Courier New',monospace;text-align:right;border-bottom:1px solid #eef2f6;">${fmt(r.downPayment)} (${d.downPaymentPct}%)</td></tr>
+      <tr><td style="padding:10px 16px;font-size:12px;color:#4a5e72;border-bottom:1px solid #eef2f6;">Loan Amount</td><td style="padding:10px 16px;font-size:12px;font-family:'Courier New',monospace;text-align:right;border-bottom:1px solid #eef2f6;">${fmt(r.loanAmount)}</td></tr>
+      <tr><td style="padding:10px 16px;font-size:12px;color:#4a5e72;border-bottom:1px solid #eef2f6;">Monthly Gross Rent</td><td style="padding:10px 16px;font-size:12px;font-family:'Courier New',monospace;text-align:right;border-bottom:1px solid #eef2f6;">${fmt(parseFloat(d.monthlyRent))}/mo</td></tr>
+      <tr><td style="padding:10px 16px;font-size:12px;color:#4a5e72;border-bottom:1px solid #eef2f6;">Monthly Expenses (excl. mortgage)</td><td style="padding:10px 16px;font-size:12px;font-family:'Courier New',monospace;text-align:right;border-bottom:1px solid #eef2f6;">${fmt(r.totalMonthlyExpenses)}/mo</td></tr>
+      <tr><td style="padding:10px 16px;font-size:12px;color:#4a5e72;border-bottom:1px solid #eef2f6;">Gross Rent Multiplier</td><td style="padding:10px 16px;font-size:12px;font-family:'Courier New',monospace;text-align:right;border-bottom:1px solid #eef2f6;">${r.grm.toFixed(1)}x</td></tr>
+      <tr><td style="padding:10px 16px;font-size:12px;color:#4a5e72;">Your Target IRR</td><td style="padding:10px 16px;font-size:12px;font-family:'Courier New',monospace;text-align:right;">${fmtP(r.targetReturnPct)}</td></tr>
     </table>
 
-    <!-- YEAR BY YEAR -->
-    <p style="margin:28px 0 14px; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#9aafbf;">Year-by-Year Performance</p>
-    <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e0e7ee; border-radius:6px; overflow:hidden;">
-      <tr style="background:#f7f9fb;">
-        <td style="padding:10px 14px; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#9aafbf;">Year</td>
-        <td style="padding:10px 14px; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#9aafbf; text-align:right;">Eff. Rent</td>
-        <td style="padding:10px 14px; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#9aafbf; text-align:right;">Net Cash Flow</td>
-        <td style="padding:10px 14px; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#9aafbf; text-align:right;">CoC Return</td>
-      </tr>
-      ${rows}
-    </table>
-
-    <!-- NOTES -->
-    ${d.notes ? `<div style="margin-top:24px; background:#f7f9fb; border:1px solid #e0e7ee; border-radius:6px; padding:16px;">
-      <p style="margin:0 0 6px; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#9aafbf;">Your Notes</p>
-      <p style="margin:0; font-size:13px; color:#4a5e72; line-height:1.6;">${d.notes}</p>
+    ${d.notes ? `<div style="background:#f7f9fb;border:1px solid #e8eef4;border-radius:8px;padding:16px;margin-bottom:24px;">
+      <p style="margin:0 0 6px;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#9aafbf;">Your Notes</p>
+      <p style="margin:0;font-size:13px;color:#4a5e72;line-height:1.65;">${d.notes}</p>
     </div>` : ''}
+
   </td></tr>
 
-  <!-- PREMIUM UPSELL -->
-  <tr><td style="background:#fefae8; border:1px solid #c9a84c33; padding:24px 40px;">
-    <p style="margin:0 0 8px; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#b8922e;">Unlock Premium Intelligence</p>
-    <p style="margin:0 0 16px; font-size:13px; color:#4a5e72; line-height:1.6;">Get local rent comps, rent growth trends, expense benchmarks vs. market, and a personalized hold/sell/refinance recommendation for this property.</p>
-    <a href="https://yieldiq.co" style="display:inline-block; background:#0b1f3a; color:#f4efe6; padding:11px 24px; border-radius:4px; font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; text-decoration:none;">Learn About Premium →</a>
+  <!-- INTERACTIVE CTA -->
+  <tr><td style="background:#0b1f3a;padding:28px 40px;text-align:center;">
+    <p style="margin:0 0 6px;font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Want to run different scenarios?</p>
+    <p style="margin:0 0 20px;font-size:18px;font-weight:600;color:#fff;font-family:Georgia,serif;line-height:1.4;">Adjust your assumptions &amp;<br/>watch the numbers update live</p>
+    <a href="${reportUrl}" style="display:inline-block;background:#c9a84c;color:#0b1f3a;padding:13px 32px;border-radius:5px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;">View Interactive Report →</a>
+    <p style="margin:14px 0 0;font-size:11px;color:rgba(255,255,255,0.3);">Change rent, expenses, interest rate &amp; more</p>
+  </td></tr>
+
+  <!-- PREMIUM -->
+  <tr><td style="background:#fefae8;border-left:4px solid #c9a84c;padding:24px 40px;">
+    <p style="margin:0 0 6px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#b8922e;">YieldIQ Premium — Coming Soon</p>
+    <p style="margin:0 0 14px;font-size:13px;color:#4a5e72;line-height:1.65;">See how this property compares to your local market. Rent comps, vacancy trends, expense benchmarks, and a personalized hold/sell/refinance signal.</p>
+    <a href="https://yieldiq.co" style="display:inline-block;background:#0b1f3a;color:#f4efe6;padding:10px 22px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;text-decoration:none;">Get Early Access</a>
   </td></tr>
 
   <!-- FOOTER -->
-  <tr><td style="background:#0b1f3a; border-radius:0 0 8px 8px; padding:24px 40px;">
-    <table width="100%" cellpadding="0" cellspacing="0">
-      <tr>
-        <td>
-          <span style="font-family:Georgia,serif; font-size:18px; font-weight:700; color:#ffffff;">Yield<em style="color:#c9a84c; font-style:italic;">IQ</em></span>
-          <p style="margin:6px 0 0; font-size:11px; color:#7a90a8; letter-spacing:0.5px;">Built for real investors.</p>
-        </td>
-        <td align="right">
-          <p style="margin:0; font-size:11px; color:#7a90a8;">© 2026 YieldIQ. All rights reserved.</p>
-          <p style="margin:4px 0 0; font-size:11px; color:#4a5e72;">This report is for informational purposes only and does not constitute financial advice.</p>
-        </td>
-      </tr>
-    </table>
+  <tr><td style="background:#0b1f3a;border-radius:0 0 10px 10px;padding:24px 40px;">
+    <table width="100%" cellpadding="0" cellspacing="0"><tr>
+      <td><span style="font-family:Georgia,serif;font-size:16px;font-weight:700;color:#fff;">Yield<em style="color:#c9a84c;font-style:italic;">IQ</em></span><p style="margin:5px 0 0;font-size:10px;color:rgba(255,255,255,0.3);">Built for real investors.</p></td>
+      <td align="right" style="vertical-align:top;"><p style="margin:0;font-size:10px;color:rgba(255,255,255,0.25);line-height:1.6;">© 2026 YieldIQ<br/>This report is for informational purposes only<br/>and does not constitute financial advice.</p></td>
+    </tr></table>
   </td></tr>
 
 </table>
@@ -316,8 +312,11 @@ exports.handler = async (event) => {
     // Run the analysis
     const results = runAnalysis(d);
 
+    // Build report URL for interactive page
+    const reportUrl = buildReportUrl(d);
+
     // Build and send the email
-    const emailHtml = buildEmail(d, results);
+    const emailHtml = buildEmail(d, results, reportUrl);
 
     await resend.emails.send({
       from: 'YieldIQ Reports <onboarding@resend.dev>',
