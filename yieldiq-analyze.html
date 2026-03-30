@@ -4,22 +4,27 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>YieldIQ — Property Analysis</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Syne:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
   :root {
-    --navy:      #0b1f3a;
-    --gold:      #b8922e;
-    --gold-lt:   #c9a84c;
-    --ink:       #1a2a3a;
-    --ink-mid:   #4a5e72;
-    --ink-muted: #7a8fa0;
-    --border:    #e0e7ee;
-    --bg:        #ffffff;
-    --bg-soft:   #f7f9fb;
-    --success:   #1a7a52;
-    --success-bg:#e8f5ee;
-    --error:     #c0392b;
-    --error-bg:  #fdf0ee;
+    --navy:       #0b1f3a;
+    --navy-mid:   #152d50;
+    --gold:       #b8922e;
+    --gold-lt:    #c9a84c;
+    --gold-pale:  #f0e0b0;
+    --cream:      #f4efe6;
+    --ink:        #1a2a3a;
+    --ink-mid:    #4a5e72;
+    --ink-muted:  #7a8fa0;
+    --border:     #e0e7ee;
+    --bg:         #ffffff;
+    --bg-soft:    #f7f9fb;
+    --success:    #1a7a52;
+    --success-bg: #e8f5ee;
+    --error:      #c0392b;
+    --error-bg:   #fdf0ee;
+    --warn:       #7a5f00;
+    --warn-bg:    #fefae8;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -37,7 +42,7 @@
   header {
     background: var(--bg);
     border-bottom: 1px solid var(--border);
-    padding: 0 60px;
+    padding: 0 48px;
     height: 64px;
     display: flex;
     align-items: center;
@@ -45,6 +50,7 @@
     position: sticky;
     top: 0;
     z-index: 100;
+    box-shadow: 0 1px 12px rgba(11,31,58,0.06);
   }
 
   .logo {
@@ -55,160 +61,636 @@
     text-decoration: none;
     display: flex;
     align-items: center;
+    gap: 2px;
   }
 
   .logo em { font-style: italic; color: var(--gold); }
-  .logo-dot { width: 6px; height: 6px; background: var(--gold); border-radius: 50%; margin-left: 3px; margin-bottom: 12px; }
-  .header-tag { font-size: 0.7rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink-muted); }
 
-  /* ── PAGE LAYOUT ── */
-  .page { max-width: 760px; margin: 0 auto; padding: 48px 24px 80px; }
+  .logo-dot {
+    width: 6px; height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    margin-left: 3px;
+    margin-bottom: 12px;
+    animation: pulse 3s ease-in-out infinite;
+  }
 
-  /* ── HERO ── */
-  .page-eyebrow { font-size: 0.68rem; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(184,146,46,0.5); }
+    50% { box-shadow: 0 0 0 5px rgba(184,146,46,0); }
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .header-tag {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+
+  .back-link {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--ink-muted);
+    text-decoration: none;
+    letter-spacing: 0.3px;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .back-link:hover { color: var(--navy); }
+
+  /* ── LAYOUT ── */
+  .analyzer-layout {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 0;
+    max-width: 1280px;
+    margin: 0 auto;
+    min-height: calc(100vh - 64px);
+  }
+
+  /* ── LEFT PANEL (form) ── */
+  .form-panel {
+    padding: 40px 48px 80px;
+    border-right: 1px solid var(--border);
+    background: var(--bg);
+  }
+
+  .page-hero { margin-bottom: 36px; }
+
+  .page-eyebrow {
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
   .page-eyebrow::before { content: ''; width: 20px; height: 1px; background: var(--gold); }
-  .page-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem, 5vw, 3rem); font-weight: 600; color: var(--navy); line-height: 1.1; letter-spacing: -0.5px; margin-bottom: 14px; }
-  .page-title em { font-style: italic; color: var(--gold); }
-  .page-sub { font-size: 0.95rem; color: var(--ink-mid); line-height: 1.75; max-width: 560px; margin-bottom: 36px; }
 
-  /* ── FORM CARD ── */
-  .form-card { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-  .form-section { padding: 32px 36px; border-bottom: 1px solid var(--border); }
+  .page-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    font-weight: 600;
+    color: var(--navy);
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+    margin-bottom: 10px;
+  }
+
+  .page-title em { font-style: italic; color: var(--gold); }
+
+  .page-sub {
+    font-size: 0.9rem;
+    color: var(--ink-mid);
+    line-height: 1.7;
+  }
+
+  /* ── FORM SECTIONS ── */
+  .form-section {
+    padding: 28px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
   .form-section:last-of-type { border-bottom: none; }
 
-  .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
-  .section-num { width: 28px; height: 28px; background: var(--navy); color: #fff; border-radius: 50%; font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: 'JetBrains Mono', monospace; }
-  .section-title { font-size: 0.85rem; font-weight: 700; color: var(--navy); letter-spacing: 0.5px; text-transform: uppercase; }
-  .section-desc { font-size: 0.78rem; color: var(--ink-muted); margin-left: auto; }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .section-num {
+    width: 24px; height: 24px;
+    background: var(--navy);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 0.66rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .section-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .section-desc {
+    font-size: 0.72rem;
+    color: var(--ink-muted);
+    margin-left: auto;
+  }
 
   /* ── FIELDS ── */
-  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .field-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
   .field-grid.thirds { grid-template-columns: 1fr 1fr 1fr; }
-  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field-grid.full   { grid-template-columns: 1fr; }
+
+  .field { display: flex; flex-direction: column; gap: 5px; }
   .field.span2 { grid-column: span 2; }
 
-  label { font-size: 0.75rem; font-weight: 600; color: var(--ink-mid); letter-spacing: 0.3px; text-transform: uppercase; }
+  label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--ink-mid);
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+
   label .required { color: var(--gold); margin-left: 2px; }
 
   .input-wrap { position: relative; display: flex; align-items: center; }
-  .input-prefix, .input-suffix { position: absolute; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: var(--ink-muted); pointer-events: none; }
-  .input-prefix { left: 12px; }
-  .input-suffix { right: 12px; }
 
-  input[type="text"], input[type="email"], input[type="number"], select {
-    width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 5px;
-    font-family: 'JetBrains Mono', monospace; font-size: 0.88rem; color: var(--ink);
-    background: var(--bg); outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+  .input-prefix, .input-suffix {
+    position: absolute;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+    pointer-events: none;
+  }
+
+  .input-prefix { left: 11px; }
+  .input-suffix { right: 11px; }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  select {
+    width: 100%;
+    padding: 9px 11px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.84rem;
+    color: var(--ink);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
     -moz-appearance: textfield;
   }
-  input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
-  input:focus, select:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(11,31,58,0.07); }
-  input.has-prefix { padding-left: 26px; }
-  input.has-suffix { padding-right: 30px; }
-  .field-hint { font-size: 0.72rem; color: var(--ink-muted); line-height: 1.4; }
 
-  /* ── LOAN TYPE TOGGLE ── */
-  .toggle-group { display: flex; border: 1px solid var(--border); border-radius: 5px; overflow: hidden; }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+  input:focus, select:focus {
+    border-color: var(--navy);
+    box-shadow: 0 0 0 3px rgba(11,31,58,0.07);
+  }
+
+  input.has-prefix  { padding-left: 24px; }
+  input.has-suffix  { padding-right: 28px; }
+
+  /* Auto-populated fields get a subtle gold tint */
+  input.auto-filled {
+    background: rgba(184,146,46,0.04);
+    border-color: rgba(184,146,46,0.3);
+  }
+
+  input.auto-filled:focus {
+    background: var(--bg);
+    border-color: var(--navy);
+  }
+
+  .field-hint {
+    font-size: 0.68rem;
+    color: var(--ink-muted);
+    line-height: 1.4;
+  }
+
+  .field-hint.auto-note {
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  /* ── TOGGLE ── */
+  .toggle-group {
+    display: flex;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
   .toggle-group input[type="radio"] { display: none; }
-  .toggle-group label { flex: 1; text-align: center; padding: 10px 8px; font-size: 0.78rem; font-weight: 600; color: var(--ink-muted); cursor: pointer; transition: background 0.2s, color 0.2s; text-transform: none; letter-spacing: 0; border-right: 1px solid var(--border); }
+
+  .toggle-group label {
+    flex: 1;
+    text-align: center;
+    padding: 9px 6px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--ink-muted);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    text-transform: none;
+    letter-spacing: 0;
+    border-right: 1px solid var(--border);
+  }
+
   .toggle-group label:last-of-type { border-right: none; }
   .toggle-group input[type="radio"]:checked + label { background: var(--navy); color: #fff; }
 
-  /* ── CONTACT NOTE ── */
-  .contact-note { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px; }
-  .contact-note-icon { width: 20px; height: 20px; background: rgba(184,146,46,0.12); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
-  .contact-note-icon svg { width: 10px; height: 10px; stroke: var(--gold); stroke-width: 2; fill: none; }
-  .contact-note p { font-size: 0.8rem; color: var(--ink-mid); line-height: 1.6; }
-  .contact-note strong { color: var(--navy); font-weight: 600; }
+  /* ── RIGHT PANEL (results) ── */
+  .results-panel {
+    position: sticky;
+    top: 64px;
+    height: calc(100vh - 64px);
+    overflow-y: auto;
+    background: var(--navy);
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+  }
 
-  /* ── SUBMIT ── */
-  .form-footer { padding: 24px 36px; background: var(--bg-soft); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-  .footer-note { font-size: 0.75rem; color: var(--ink-muted); line-height: 1.5; }
+  .results-header {
+    margin-bottom: 24px;
+  }
 
-  .submit-btn { background: var(--navy); color: #fff; border: none; padding: 14px 32px; border-radius: 5px; font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: background 0.2s, transform 0.15s; white-space: nowrap; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-  .submit-btn:hover { background: #152d50; }
-  .submit-btn:active { transform: scale(0.98); }
-  .submit-btn:disabled { opacity: 0.6; pointer-events: none; }
+  .results-eyebrow {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 6px;
+  }
 
-  .btn-arrow { width: 16px; height: 16px; stroke: #fff; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.2s; }
-  .submit-btn:hover .btn-arrow { transform: translateX(3px); }
+  .results-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.1;
+  }
 
-  /* ── SPINNER ── */
-  .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  /* Verdict banner */
+  .verdict-banner {
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.4s ease;
+  }
 
-  /* ── ERROR ── */
-  .error-msg { display: none; background: var(--error-bg); border: 1px solid rgba(192,57,43,0.2); border-radius: 6px; padding: 12px 16px; font-size: 0.82rem; color: var(--error); margin: 0 36px 24px; }
-  .error-msg.show { display: block; }
+  .verdict-banner.empty {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
 
-  /* ── SUCCESS PANEL ── */
-  .success-panel { display: none; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 60px 40px; text-align: center; }
-  .success-panel.show { display: block; }
+  .verdict-banner.go {
+    background: rgba(26,122,82,0.2);
+    border: 1px solid rgba(26,122,82,0.4);
+  }
 
-  .success-icon { width: 56px; height: 56px; background: var(--success-bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; }
-  .success-icon svg { width: 24px; height: 24px; stroke: var(--success); stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .verdict-banner.borderline {
+    background: rgba(184,146,46,0.15);
+    border: 1px solid rgba(184,146,46,0.4);
+  }
 
-  .success-title { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 600; color: var(--navy); margin-bottom: 12px; }
-  .success-sub { font-size: 0.92rem; color: var(--ink-mid); line-height: 1.7; max-width: 420px; margin: 0 auto 32px; }
+  .verdict-banner.nogo {
+    background: rgba(192,57,43,0.15);
+    border: 1px solid rgba(192,57,43,0.35);
+  }
 
-  .success-detail { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 6px; padding: 20px 24px; max-width: 440px; margin: 0 auto; text-align: left; }
-  .success-detail-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 12px; }
+  .verdict-icon {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 1rem;
+  }
 
-  .calc-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.83rem; }
-  .calc-row:last-child { border-bottom: none; }
-  .calc-label { color: var(--ink-mid); }
-  .calc-val { font-family: 'JetBrains Mono', monospace; font-weight: 500; color: var(--navy); }
-  .calc-val.positive { color: var(--success); }
-  .calc-val.negative { color: var(--error); }
-  .calc-val.gold { color: var(--gold); }
+  .verdict-banner.go .verdict-icon { background: rgba(26,122,82,0.3); }
+  .verdict-banner.borderline .verdict-icon { background: rgba(184,146,46,0.25); }
+  .verdict-banner.nogo .verdict-icon { background: rgba(192,57,43,0.25); }
+  .verdict-banner.empty .verdict-icon { background: rgba(255,255,255,0.08); }
 
-  .verdict-bar { margin-top: 16px; padding: 12px 16px; border-radius: 6px; font-size: 0.82rem; font-weight: 600; }
-  .verdict-bar.go   { background: var(--success-bg); color: var(--success); border: 1px solid rgba(26,122,82,0.25); }
-  .verdict-bar.nogo { background: var(--error-bg); color: var(--error); border: 1px solid rgba(192,57,43,0.2); }
-  .verdict-bar.borderline { background: #fefae8; color: #7a5f00; border: 1px solid rgba(184,146,46,0.3); }
+  .verdict-text { flex: 1; }
+  .verdict-main { font-size: 0.84rem; font-weight: 700; color: #fff; }
+  .verdict-sub { font-size: 0.72rem; color: rgba(255,255,255,0.5); margin-top: 2px; }
 
-  /* ── WHAT YOU GET ── */
-  .what-you-get { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 28px 32px; margin-top: 24px; }
-  .wyg-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 16px; }
-  .wyg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .wyg-item { display: flex; align-items: flex-start; gap: 10px; font-size: 0.82rem; color: var(--ink-mid); line-height: 1.5; }
-  .wyg-check { width: 16px; height: 16px; background: var(--success-bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
-  .wyg-check svg { width: 8px; height: 8px; stroke: var(--success); stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  /* Metrics grid */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
 
-  /* ── RESPONSIVE ── */
-  @media (max-width: 600px) {
+  .metric-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    padding: 14px 14px 12px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .metric-card.highlight {
+    background: rgba(184,146,46,0.12);
+    border-color: rgba(184,146,46,0.3);
+  }
+
+  .metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(184,146,46,0.4), transparent);
+  }
+
+  .metric-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.56rem;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 6px;
+  }
+
+  .metric-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+    letter-spacing: -0.5px;
+    transition: all 0.3s ease;
+  }
+
+  .metric-value.gold { color: var(--gold-lt); }
+  .metric-value.green { color: #4ade80; }
+  .metric-value.red { color: #f87171; }
+  .metric-value.empty { color: rgba(255,255,255,0.18); font-size: 1.2rem; letter-spacing: 1px; }
+
+  .metric-delta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: rgba(255,255,255,0.35);
+    margin-top: 3px;
+  }
+
+  /* Gauge bar */
+  .gauge-wrap {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+
+  .gauge-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .gauge-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .gauge-pct {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--gold-lt);
+    font-weight: 500;
+  }
+
+  .gauge-track {
+    height: 5px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .gauge-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-lt));
+    border-radius: 3px;
+    width: 0%;
+    transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* Additional metrics */
+  .extra-metrics {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 6px;
+    padding: 14px;
+    margin-bottom: 20px;
+  }
+
+  .extra-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 0.78rem;
+  }
+
+  .extra-row:last-child { border-bottom: none; }
+
+  .extra-label { color: rgba(255,255,255,0.45); }
+
+  .extra-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.75);
+    font-weight: 500;
+  }
+
+  .extra-val.empty { color: rgba(255,255,255,0.18); }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: rgba(255,255,255,0.25);
+  }
+
+  .empty-state-icon {
+    font-size: 2.5rem;
+    margin-bottom: 16px;
+    opacity: 0.4;
+  }
+
+  .empty-state p {
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+
+  /* CTA in results panel */
+  .results-cta {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .results-cta-text {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.5;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+
+  .cta-email-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .cta-email-form input {
+    padding: 11px 14px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 5px;
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.84rem;
+  }
+
+  .cta-email-form input::placeholder { color: rgba(255,255,255,0.3); }
+
+  .cta-email-form input:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(184,146,46,0.15);
+    background: rgba(255,255,255,0.1);
+  }
+
+  .cta-submit-btn {
+    background: var(--gold);
+    color: var(--navy);
+    border: none;
+    padding: 12px;
+    border-radius: 5px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    width: 100%;
+  }
+
+  .cta-submit-btn:hover { background: var(--gold-lt); }
+  .cta-submit-btn:active { transform: scale(0.98); }
+  .cta-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .cta-success {
+    display: none;
+    text-align: center;
+    padding: 16px;
+    background: rgba(26,122,82,0.2);
+    border: 1px solid rgba(26,122,82,0.4);
+    border-radius: 5px;
+    color: #4ade80;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+
+  .cta-success.show { display: block; }
+
+  .disclaimer {
+    font-size: 0.62rem;
+    color: rgba(255,255,255,0.25);
+    text-align: center;
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 900px) {
+    .analyzer-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .results-panel {
+      position: relative;
+      top: 0;
+      height: auto;
+      order: -1;
+    }
+
+    .form-panel {
+      padding: 28px 20px 60px;
+      border-right: none;
+      border-top: 1px solid var(--border);
+    }
+
     header { padding: 0 20px; }
-    .page { padding: 32px 16px 60px; }
-    .form-section { padding: 24px 20px; }
-    .field-grid { grid-template-columns: 1fr; }
+
     .field-grid.thirds { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 480px) {
+    .field-grid { grid-template-columns: 1fr; }
+    .field-grid.thirds { grid-template-columns: 1fr; }
     .field.span2 { grid-column: span 1; }
-    .form-footer { flex-direction: column; align-items: stretch; }
-    .submit-btn { justify-content: center; }
-    .wyg-grid { grid-template-columns: 1fr; }
-    .error-msg { margin: 0 20px 20px; }
+    .metrics-grid { grid-template-columns: 1fr 1fr; }
   }
 </style>
 </head>
 <body>
 
 <header>
-  <a href="index.html" class="logo">Yield<em>IQ</em><span class="logo-dot"></span></a>
-  <span class="header-tag">Free Property Analysis</span>
+  <a href="/" class="logo">Yield<em>IQ</em><span class="logo-dot"></span></a>
+  <div class="header-right">
+    <span class="header-tag">Property Analysis</span>
+    <a href="/" class="back-link">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="7" x2="2" y2="7"/><polyline points="6,3 2,7 6,11"/></svg>
+      Back to Home
+    </a>
+  </div>
 </header>
 
-<div class="page">
+<div class="analyzer-layout">
 
-  <div class="page-hero">
-    <div class="page-eyebrow">Property Analysis Request</div>
-    <h1 class="page-title">Tell us about your<br/><em>investment property</em></h1>
-    <p class="page-sub">Fill out the form below and we'll email you a full performance report — including cash flow, cash-on-cash return, IRR, and a clear Go/No-Go recommendation. Free during beta.</p>
-  </div>
+  <!-- ── LEFT: FORM ── -->
+  <div class="form-panel">
+    <div class="page-hero">
+      <div class="page-eyebrow">Free Analysis</div>
+      <h1 class="page-title">Analyze your <em>investment</em></h1>
+      <p class="page-sub">Enter your property details and watch your returns calculate in real time. Smart defaults are pre-filled based on property type — adjust any figure to match your situation.</p>
+    </div>
 
-  <!-- FORM CARD -->
-  <div class="form-card" id="formCard">
-
-    <!-- 1: PROPERTY -->
+    <!-- SECTION 1: PROPERTY -->
     <div class="form-section">
       <div class="section-header">
         <div class="section-num">1</div>
@@ -216,12 +698,12 @@
       </div>
       <div class="field-grid">
         <div class="field span2">
-          <label>Property Address <span class="required">*</span></label>
-          <input type="text" id="address" placeholder="123 Main St, Miami, FL 33101" required/>
+          <label>Property Address</label>
+          <input type="text" id="address" placeholder="123 Main St, Miami, FL 33101"/>
         </div>
         <div class="field">
-          <label>Property Type</label>
-          <select id="propType">
+          <label>Property Type <span class="required">*</span></label>
+          <select id="propType" onchange="applyDefaults()">
             <option value="sfr">Single Family (SFR)</option>
             <option value="duplex">Duplex (2-unit)</option>
             <option value="triplex">Triplex (3-unit)</option>
@@ -232,13 +714,13 @@
           <label>Purchase Price <span class="required">*</span></label>
           <div class="input-wrap">
             <span class="input-prefix">$</span>
-            <input type="number" id="purchasePrice" class="has-prefix" placeholder="450000" required/>
+            <input type="number" id="purchasePrice" class="has-prefix" placeholder="450,000" oninput="onPriceChange(); recalc()"/>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 2: FINANCING -->
+    <!-- SECTION 2: FINANCING -->
     <div class="form-section">
       <div class="section-header">
         <div class="section-num">2</div>
@@ -248,7 +730,7 @@
         <div class="field">
           <label>Down Payment <span class="required">*</span></label>
           <div class="input-wrap">
-            <input type="number" id="downPaymentPct" class="has-suffix" placeholder="20" required/>
+            <input type="number" id="downPaymentPct" class="has-suffix" placeholder="25" oninput="recalc()"/>
             <span class="input-suffix">%</span>
           </div>
           <span class="field-hint">Typical: 20–25% for investment properties</span>
@@ -256,13 +738,13 @@
         <div class="field">
           <label>Interest Rate <span class="required">*</span></label>
           <div class="input-wrap">
-            <input type="number" id="interestRate" class="has-suffix" placeholder="7.25" step="0.01" required/>
+            <input type="number" id="interestRate" class="has-suffix" placeholder="7.25" step="0.01" oninput="recalc()"/>
             <span class="input-suffix">%</span>
           </div>
         </div>
         <div class="field">
           <label>Loan Term</label>
-          <select id="loanTerm">
+          <select id="loanTerm" onchange="recalc()">
             <option value="30">30 years</option>
             <option value="20">20 years</option>
             <option value="15">15 years</option>
@@ -272,18 +754,18 @@
         <div class="field">
           <label>Loan Type</label>
           <div class="toggle-group">
-            <input type="radio" name="loanType" id="lt-conv" value="conventional" checked/>
+            <input type="radio" name="loanType" id="lt-conv" value="conventional" checked onchange="recalc()"/>
             <label for="lt-conv">Conventional</label>
-            <input type="radio" name="loanType" id="lt-io" value="io"/>
+            <input type="radio" name="loanType" id="lt-io" value="io" onchange="recalc()"/>
             <label for="lt-io">Interest Only</label>
-            <input type="radio" name="loanType" id="lt-arm" value="arm"/>
+            <input type="radio" name="loanType" id="lt-arm" value="arm" onchange="recalc()"/>
             <label for="lt-arm">ARM</label>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 3: INCOME -->
+    <!-- SECTION 3: INCOME -->
     <div class="form-section">
       <div class="section-header">
         <div class="section-num">3</div>
@@ -294,98 +776,115 @@
           <label>Gross Monthly Rent <span class="required">*</span></label>
           <div class="input-wrap">
             <span class="input-prefix">$</span>
-            <input type="number" id="monthlyRent" class="has-prefix" placeholder="2800" required/>
+            <input type="number" id="monthlyRent" class="has-prefix" placeholder="2,800" oninput="recalc()"/>
           </div>
           <span class="field-hint">Total rent across all units</span>
         </div>
         <div class="field">
           <label>Vacancy Rate</label>
           <div class="input-wrap">
-            <input type="number" id="vacancyRate" class="has-suffix" placeholder="5"/>
+            <input type="number" id="vacancyRate" class="has-suffix auto-filled" oninput="clearAuto(this); recalc()"/>
             <span class="input-suffix">%</span>
           </div>
-          <span class="field-hint">Typical: 5–8% for residential</span>
+          <span class="field-hint auto-note" id="hint-vacancy">YieldIQ default — edit to override</span>
         </div>
         <div class="field">
           <label>Annual Rent Growth</label>
           <div class="input-wrap">
-            <input type="number" id="rentGrowth" class="has-suffix" placeholder="3" step="0.1"/>
+            <input type="number" id="rentGrowth" class="has-suffix auto-filled" step="0.1" oninput="clearAuto(this); recalc()"/>
             <span class="input-suffix">%</span>
           </div>
+          <span class="field-hint auto-note">YieldIQ default — edit to override</span>
         </div>
         <div class="field">
           <label>Expected Appreciation</label>
           <div class="input-wrap">
-            <input type="number" id="appreciation" class="has-suffix" placeholder="3" step="0.1"/>
+            <input type="number" id="appreciation" class="has-suffix auto-filled" step="0.1" oninput="clearAuto(this); recalc()"/>
             <span class="input-suffix">%</span>
           </div>
+          <span class="field-hint auto-note">YieldIQ default — edit to override</span>
         </div>
       </div>
     </div>
 
-    <!-- 4: EXPENSES -->
+    <!-- SECTION 4: EXPENSES -->
     <div class="form-section">
       <div class="section-header">
         <div class="section-num">4</div>
         <div class="section-title">Monthly Expenses</div>
-        <span class="section-desc">Excluding mortgage</span>
+        <span class="section-desc">Excl. mortgage · Pre-filled by property type</span>
       </div>
       <div class="field-grid thirds">
         <div class="field">
           <label>Property Taxes</label>
-          <div class="input-wrap"><span class="input-prefix">$</span><input type="number" id="taxes" class="has-prefix" placeholder="400"/></div>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="taxes" class="has-prefix" placeholder="400" oninput="recalc()"/>
+          </div>
         </div>
         <div class="field">
           <label>Insurance</label>
-          <div class="input-wrap"><span class="input-prefix">$</span><input type="number" id="insurance" class="has-prefix" placeholder="150"/></div>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="insurance" class="has-prefix auto-filled" oninput="clearAuto(this); recalc()"/>
+          </div>
+          <span class="field-hint auto-note">YieldIQ estimate</span>
         </div>
         <div class="field">
           <label>HOA Fees</label>
-          <div class="input-wrap"><span class="input-prefix">$</span><input type="number" id="hoa" class="has-prefix" placeholder="0"/></div>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="hoa" class="has-prefix" placeholder="0" oninput="recalc()"/>
+          </div>
         </div>
         <div class="field">
           <label>Maintenance</label>
-          <div class="input-wrap"><span class="input-prefix">$</span><input type="number" id="maintenance" class="has-prefix" placeholder="150"/></div>
-          <span class="field-hint">Rule of thumb: 1% of value/yr</span>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="maintenance" class="has-prefix auto-filled" oninput="clearAuto(this); recalc()"/>
+          </div>
+          <span class="field-hint auto-note">YieldIQ estimate (1% rule)</span>
         </div>
         <div class="field">
           <label>Property Mgmt</label>
-          <div class="input-wrap"><span class="input-prefix">$</span><input type="number" id="mgmt" class="has-prefix" placeholder="0"/></div>
-          <span class="field-hint">Typically 8–10% of rent</span>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="mgmt" class="has-prefix auto-filled" oninput="clearAuto(this); recalc()"/>
+          </div>
+          <span class="field-hint auto-note">YieldIQ estimate</span>
         </div>
         <div class="field">
           <label>CapEx Reserve</label>
-          <div class="input-wrap"><span class="input-prefix">$</span><input type="number" id="capex" class="has-prefix" placeholder="100"/></div>
-        </div>
-        <div class="field">
-          <label>Other</label>
-          <div class="input-wrap"><span class="input-prefix">$</span><input type="number" id="other" class="has-prefix" placeholder="0"/></div>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="capex" class="has-prefix auto-filled" oninput="clearAuto(this); recalc()"/>
+          </div>
+          <span class="field-hint auto-note">YieldIQ estimate</span>
         </div>
       </div>
     </div>
 
-    <!-- 5: GOALS -->
+    <!-- SECTION 5: INVESTMENT GOALS -->
     <div class="form-section">
       <div class="section-header">
         <div class="section-num">5</div>
-        <div class="section-title">Investment Goals</div>
+        <div class="section-title">Your Investment Goals</div>
       </div>
       <div class="field-grid">
         <div class="field">
           <label>Hold Period</label>
-          <select id="holdPeriod">
+          <select id="holdPeriod" onchange="recalc()">
             <option value="5">5 years</option>
             <option value="7">7 years</option>
             <option value="10" selected>10 years</option>
             <option value="15">15 years</option>
             <option value="20">20 years</option>
-            <option value="30">30 years</option>
           </select>
         </div>
         <div class="field">
-          <label>Required Return <span class="required">*</span></label>
+          <label>Required Return (IRR)</label>
           <div class="input-wrap">
-            <input type="number" id="targetReturn" class="has-suffix" placeholder="10" step="0.1"/>
+            <input type="number" id="targetReturn" class="has-suffix" placeholder="10" step="0.1" oninput="recalc()"/>
             <span class="input-suffix">%</span>
           </div>
           <span class="field-hint">Minimum IRR you'd accept</span>
@@ -393,196 +892,413 @@
         <div class="field">
           <label>Selling Costs at Exit</label>
           <div class="input-wrap">
-            <input type="number" id="sellingCosts" class="has-suffix" placeholder="6" step="0.1"/>
+            <input type="number" id="sellingCosts" class="has-suffix auto-filled" step="0.1" oninput="clearAuto(this); recalc()"/>
             <span class="input-suffix">%</span>
           </div>
-          <span class="field-hint">Realtor fees + closing costs</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 6: CONTACT -->
-    <div class="form-section">
-      <div class="section-header">
-        <div class="section-num">6</div>
-        <div class="section-title">Where to Send Your Report</div>
-      </div>
-      <div class="contact-note">
-        <div class="contact-note-icon">
-          <svg viewBox="0 0 12 12"><path d="M6 1v5M6 9v1" stroke-linecap="round"/></svg>
-        </div>
-        <p>Your report will be emailed to you <strong>automatically within minutes</strong> of submitting. Your data is never shared or sold.</p>
-      </div>
-      <div class="field-grid">
-        <div class="field">
-          <label>First Name <span class="required">*</span></label>
-          <input type="text" id="firstName" placeholder="Conor" required/>
+          <span class="field-hint auto-note">YieldIQ default</span>
         </div>
         <div class="field">
-          <label>Last Name</label>
-          <input type="text" id="lastName" placeholder="Smith"/>
-        </div>
-        <div class="field span2">
-          <label>Email Address <span class="required">*</span></label>
-          <input type="email" id="email" placeholder="you@example.com" required/>
-        </div>
-        <div class="field span2">
-          <label>Anything else we should know?</label>
-          <input type="text" id="notes" placeholder="e.g. Under contract, closing in 3 weeks. Considering short-term rental."/>
+          <label>Other Monthly Expenses</label>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="other" class="has-prefix" placeholder="0" oninput="recalc()"/>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- FOOTER -->
-    <div class="form-footer">
-      <p class="footer-note">Free during beta · No credit card · Report emailed automatically</p>
-      <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">
-        Request My Report
-        <svg class="btn-arrow" viewBox="0 0 16 16"><line x1="2" y1="8" x2="14" y2="8"/><polyline points="9,3 14,8 9,13"/></svg>
-      </button>
+  </div><!-- /form-panel -->
+
+  <!-- ── RIGHT: RESULTS ── -->
+  <div class="results-panel" id="resultsPanel">
+
+    <div class="results-header">
+      <div class="results-eyebrow">Live Analysis</div>
+      <div class="results-title">Your Returns</div>
     </div>
 
-    <div class="error-msg" id="errorMsg">Please fill in all required fields before submitting.</div>
-
-  </div><!-- /form-card -->
-
-  <!-- SUCCESS PANEL -->
-  <div class="success-panel" id="successPanel">
-    <div class="success-icon">
-      <svg viewBox="0 0 24 24"><polyline points="4,12 9,17 20,6"/></svg>
+    <!-- Verdict -->
+    <div class="verdict-banner empty" id="verdictBanner">
+      <div class="verdict-icon">⚡</div>
+      <div class="verdict-text">
+        <div class="verdict-main" id="verdictMain">Enter your property details</div>
+        <div class="verdict-sub" id="verdictSub">Results update instantly as you type</div>
+      </div>
     </div>
-    <div class="success-title">Report on its way</div>
-    <p class="success-sub">Your full analysis is being emailed to <strong id="confirmEmail"></strong> right now. Check your inbox in the next few minutes.</p>
 
-    <div class="success-detail">
-      <div class="success-detail-title">Snapshot Results</div>
-      <div class="calc-row"><span class="calc-label">Monthly Mortgage</span><span class="calc-val" id="r-mortgage">—</span></div>
-      <div class="calc-row"><span class="calc-label">Monthly Cash Flow</span><span class="calc-val" id="r-cashflow">—</span></div>
-      <div class="calc-row"><span class="calc-label">Cash-on-Cash Return</span><span class="calc-val" id="r-coc">—</span></div>
-      <div class="calc-row"><span class="calc-label">Gross Rent Multiplier</span><span class="calc-val" id="r-grm">—</span></div>
-      <div class="calc-row"><span class="calc-label">Break-Even Rent</span><span class="calc-val" id="r-breakeven">—</span></div>
-      <div class="calc-row"><span class="calc-label">Levered IRR</span><span class="calc-val gold" id="r-irr">—</span></div>
-      <div class="calc-row"><span class="calc-label">Max Price for Target Return</span><span class="calc-val" id="r-maxprice">—</span></div>
-      <div class="verdict-bar" id="r-verdict"></div>
+    <!-- Key metrics -->
+    <div class="metrics-grid">
+      <div class="metric-card highlight">
+        <div class="metric-label">Levered IRR</div>
+        <div class="metric-value gold empty" id="r-irr">—</div>
+        <div class="metric-delta" id="r-irr-delta">vs. your target</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Cash-on-Cash Yr 1</div>
+        <div class="metric-value empty" id="r-coc">—</div>
+        <div class="metric-delta">annual cash return</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Monthly Cash Flow</div>
+        <div class="metric-value empty" id="r-cashflow">—</div>
+        <div class="metric-delta">after all expenses</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Cap Rate</div>
+        <div class="metric-value empty" id="r-caprate">—</div>
+        <div class="metric-delta">going-in</div>
+      </div>
     </div>
-  </div>
 
-  <!-- WHAT YOU GET -->
-  <div class="what-you-get">
-    <div class="wyg-title">What's in your report</div>
-    <div class="wyg-grid">
-      <div class="wyg-item"><div class="wyg-check"><svg viewBox="0 0 8 8"><polyline points="1,4 3,6 7,2"/></svg></div>Full cash flow analysis (monthly & annual)</div>
-      <div class="wyg-item"><div class="wyg-check"><svg viewBox="0 0 8 8"><polyline points="1,4 3,6 7,2"/></svg></div>Levered & unlevered IRR over hold period</div>
-      <div class="wyg-item"><div class="wyg-check"><svg viewBox="0 0 8 8"><polyline points="1,4 3,6 7,2"/></svg></div>Cash-on-cash return, year by year</div>
-      <div class="wyg-item"><div class="wyg-check"><svg viewBox="0 0 8 8"><polyline points="1,4 3,6 7,2"/></svg></div>Break-even rent & occupancy rate</div>
-      <div class="wyg-item"><div class="wyg-check"><svg viewBox="0 0 8 8"><polyline points="1,4 3,6 7,2"/></svg></div>Maximum purchase price for your target return</div>
-      <div class="wyg-item"><div class="wyg-check"><svg viewBox="0 0 8 8"><polyline points="1,4 3,6 7,2"/></svg></div>Clear Go / No-Go recommendation</div>
-      <div class="wyg-item"><div class="wyg-check"><svg viewBox="0 0 8 8"><polyline points="1,4 3,6 7,2"/></svg></div>Year-by-year performance table</div>
-      <div class="wyg-item"><div class="wyg-check"><svg viewBox="0 0 8 8"><polyline points="1,4 3,6 7,2"/></svg></div>Sensitivity analysis (rate & rent changes)</div>
+    <!-- IRR gauge -->
+    <div class="gauge-wrap">
+      <div class="gauge-header">
+        <span class="gauge-label">Return vs. Required</span>
+        <span class="gauge-pct" id="r-gauge-pct">—</span>
+      </div>
+      <div class="gauge-track">
+        <div class="gauge-fill" id="gaugeBar"></div>
+      </div>
     </div>
-  </div>
 
-</div><!-- /page -->
+    <!-- Additional metrics -->
+    <div class="extra-metrics">
+      <div class="extra-row">
+        <span class="extra-label">Monthly Mortgage</span>
+        <span class="extra-val empty" id="r-mortgage">—</span>
+      </div>
+      <div class="extra-row">
+        <span class="extra-label">Break-Even Rent</span>
+        <span class="extra-val empty" id="r-breakeven">—</span>
+      </div>
+      <div class="extra-row">
+        <span class="extra-label">Max Price for Target</span>
+        <span class="extra-val empty" id="r-maxprice">—</span>
+      </div>
+      <div class="extra-row">
+        <span class="extra-label">Gross Rent Multiplier</span>
+        <span class="extra-val empty" id="r-grm">—</span>
+      </div>
+    </div>
+
+    <!-- Email CTA -->
+    <div class="results-cta">
+      <p class="results-cta-text">Get the full detailed report — sensitivity analysis, year-by-year projections, and personalized notes — delivered to your inbox.</p>
+      <div class="cta-email-form" id="ctaForm">
+        <input type="text" id="cta-name" placeholder="First name"/>
+        <input type="email" id="cta-email" placeholder="Your email address"/>
+        <button class="cta-submit-btn" onclick="submitReport()">Send Me the Full Report →</button>
+      </div>
+      <div class="cta-success" id="ctaSuccess">✓ Report request received — check your inbox within 24 hours.</div>
+      <p class="disclaimer">Free during beta · No credit card · Your data is never shared</p>
+    </div>
+
+  </div><!-- /results-panel -->
+
+</div><!-- /analyzer-layout -->
 
 <script>
-function getVal(id, fallback = '') {
-  return document.getElementById(id).value || fallback;
+// ── DEFAULTS BY PROPERTY TYPE ──────────────────────────────────
+const DEFAULTS = {
+  sfr:      { vacancy: 5,  maintenance_pct: 1.0, mgmt_pct: 0,  capex: 100, insurance_pct: 0.4, rentGrowth: 3, appreciation: 3, sellingCosts: 6, downPct: 20 },
+  duplex:   { vacancy: 6,  maintenance_pct: 1.0, mgmt_pct: 8,  capex: 150, insurance_pct: 0.5, rentGrowth: 3, appreciation: 3, sellingCosts: 6, downPct: 25 },
+  triplex:  { vacancy: 7,  maintenance_pct: 1.25,mgmt_pct: 8,  capex: 200, insurance_pct: 0.55,rentGrowth: 3, appreciation: 3, sellingCosts: 6, downPct: 25 },
+  fourplex: { vacancy: 7,  maintenance_pct: 1.25,mgmt_pct: 10, capex: 250, insurance_pct: 0.6, rentGrowth: 3, appreciation: 3, sellingCosts: 6, downPct: 25 },
+};
+
+function applyDefaults() {
+  const type = document.getElementById('propType').value;
+  const d = DEFAULTS[type];
+  const price = parseFloat(document.getElementById('purchasePrice').value) || 0;
+  const rent  = parseFloat(document.getElementById('monthlyRent').value)  || 0;
+
+  setAuto('vacancyRate',   d.vacancy);
+  setAuto('rentGrowth',    d.rentGrowth);
+  setAuto('appreciation',  d.appreciation);
+  setAuto('sellingCosts',  d.sellingCosts);
+
+  // Price-dependent defaults
+  if (price > 0) {
+    setAuto('maintenance', Math.round(price * (d.maintenance_pct / 100) / 12));
+    setAuto('insurance',   Math.round(price * (d.insurance_pct  / 100) / 12));
+  } else {
+    setAuto('maintenance', '');
+    setAuto('insurance',   '');
+  }
+
+  // Mgmt: % of rent
+  if (rent > 0 && d.mgmt_pct > 0) {
+    setAuto('mgmt', Math.round(rent * d.mgmt_pct / 100));
+  } else {
+    setAuto('mgmt', 0);
+  }
+
+  setAuto('capex', d.capex);
+  recalc();
 }
 
-function validate() {
-  const required = ['address','purchasePrice','downPaymentPct','interestRate','monthlyRent','firstName','email'];
-  for (const id of required) {
-    if (!document.getElementById(id).value.trim()) {
-      document.getElementById(id).focus();
-      return false;
+function onPriceChange() {
+  const type = document.getElementById('propType').value;
+  const d = DEFAULTS[type];
+  const price = parseFloat(document.getElementById('purchasePrice').value) || 0;
+  if (price > 0) {
+    if (document.getElementById('maintenance').classList.contains('auto-filled')) {
+      setAuto('maintenance', Math.round(price * (d.maintenance_pct / 100) / 12));
+    }
+    if (document.getElementById('insurance').classList.contains('auto-filled')) {
+      setAuto('insurance', Math.round(price * (d.insurance_pct / 100) / 12));
     }
   }
-  return true;
 }
 
-function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
-function fmtP(n) { return parseFloat(n).toFixed(2) + '%'; }
+function setAuto(id, val) {
+  const el = document.getElementById(id);
+  el.value = val;
+  el.classList.add('auto-filled');
+}
 
-async function handleSubmit() {
-  const errorMsg = document.getElementById('errorMsg');
-  if (!validate()) { errorMsg.classList.add('show'); return; }
-  errorMsg.classList.remove('show');
+function clearAuto(el) {
+  el.classList.remove('auto-filled');
+}
 
-  const btn = document.getElementById('submitBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<div class="spinner"></div> Sending...';
+// ── CALCULATIONS ──────────────────────────────────────────────
+function getVal(id, fallback = 0) {
+  const v = parseFloat(document.getElementById(id).value);
+  return isNaN(v) ? fallback : v;
+}
 
-  const payload = {
-    address:       getVal('address'),
-    propType:      getVal('propType'),
-    purchasePrice: getVal('purchasePrice'),
-    downPaymentPct:getVal('downPaymentPct', '20'),
-    interestRate:  getVal('interestRate'),
-    loanTerm:      getVal('loanTerm', '30'),
-    loanType:      document.querySelector('input[name="loanType"]:checked').value,
-    monthlyRent:   getVal('monthlyRent'),
-    vacancyRate:   getVal('vacancyRate', '5'),
-    rentGrowth:    getVal('rentGrowth', '3'),
-    appreciation:  getVal('appreciation', '3'),
-    taxes:         getVal('taxes', '0'),
-    insurance:     getVal('insurance', '0'),
-    hoa:           getVal('hoa', '0'),
-    maintenance:   getVal('maintenance', '0'),
-    mgmt:          getVal('mgmt', '0'),
-    capex:         getVal('capex', '0'),
-    other:         getVal('other', '0'),
-    holdPeriod:    getVal('holdPeriod', '10'),
-    targetReturn:  getVal('targetReturn', '10'),
-    sellingCosts:  getVal('sellingCosts', '6'),
-    firstName:     getVal('firstName'),
-    lastName:      getVal('lastName'),
-    email:         getVal('email'),
-    notes:         getVal('notes'),
-  };
+function fmt(n)    { return '$' + Math.round(n).toLocaleString(); }
+function fmtPct(n) { return n.toFixed(1) + '%'; }
 
-  try {
-    const res  = await fetch('/.netlify/functions/analyze', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify(payload),
-    });
+function calcMortgage(principal, annualRate, termYears, isIO) {
+  if (isIO) return principal * (annualRate / 100 / 12);
+  const r = annualRate / 100 / 12;
+  const n = termYears * 12;
+  if (r === 0) return principal / n;
+  return principal * (r * Math.pow(1+r,n)) / (Math.pow(1+r,n)-1);
+}
 
-    const data = await res.json();
+function calcIRR(cashflows) {
+  let rate = 0.1;
+  for (let i = 0; i < 200; i++) {
+    let npv = 0, dnpv = 0;
+    for (let t = 0; t < cashflows.length; t++) {
+      npv  += cashflows[t] / Math.pow(1+rate, t);
+      dnpv -= t * cashflows[t] / Math.pow(1+rate, t+1);
+    }
+    if (Math.abs(dnpv) < 1e-10) break;
+    const nr = rate - npv/dnpv;
+    if (Math.abs(nr - rate) < 1e-7) { rate = nr; break; }
+    rate = nr;
+  }
+  return rate;
+}
 
-    if (!res.ok || !data.success) throw new Error(data.error || 'Unknown error');
+let hasResults = false;
 
-    const p = data.preview;
+function recalc() {
+  const purchasePrice = getVal('purchasePrice');
+  const monthlyRent   = getVal('monthlyRent');
 
-    // Show success
-    document.getElementById('formCard').style.display = 'none';
-    document.getElementById('successPanel').classList.add('show');
-    document.getElementById('confirmEmail').textContent = payload.email;
+  if (purchasePrice < 1000 || monthlyRent < 1) {
+    showEmpty();
+    return;
+  }
 
-    const cf = parseFloat(p.monthlyCashflow);
-    document.getElementById('r-mortgage').textContent   = fmt(p.mortgage);
-    document.getElementById('r-cashflow').textContent   = (cf >= 0 ? '+' : '') + fmt(cf) + '/mo';
-    document.getElementById('r-cashflow').className     = 'calc-val ' + (cf >= 0 ? 'positive' : 'negative');
-    document.getElementById('r-coc').textContent        = fmtP(p.cocReturn);
-    document.getElementById('r-coc').className          = 'calc-val ' + (parseFloat(p.cocReturn) >= parseFloat(payload.targetReturn) ? 'positive' : 'negative');
-    document.getElementById('r-grm').textContent        = p.grm + 'x';
-    document.getElementById('r-breakeven').textContent  = fmt(p.breakEven) + '/mo';
-    document.getElementById('r-irr').textContent        = fmtP(p.irr);
-    document.getElementById('r-maxprice').textContent   = fmt(p.maxPrice);
+  const downPct      = getVal('downPaymentPct', 25) / 100;
+  const interestRate = getVal('interestRate', 7.25);
+  const loanTerm     = parseInt(document.getElementById('loanTerm').value);
+  const isIO         = document.querySelector('input[name="loanType"]:checked').value === 'io';
+  const vacancyRate  = getVal('vacancyRate', 5) / 100;
+  const rentGrowth   = getVal('rentGrowth', 3) / 100;
+  const appreciation = getVal('appreciation', 3) / 100;
+  const taxes        = getVal('taxes');
+  const insurance    = getVal('insurance');
+  const hoa          = getVal('hoa');
+  const maintenance  = getVal('maintenance');
+  const mgmt         = getVal('mgmt');
+  const capex        = getVal('capex');
+  const other        = getVal('other');
+  const holdPeriod   = parseInt(document.getElementById('holdPeriod').value);
+  const targetReturn = getVal('targetReturn', 10) / 100;
+  const sellingCosts = getVal('sellingCosts', 6) / 100;
 
-    const verdict = document.getElementById('r-verdict');
-    verdict.textContent = p.verdict;
-    const diff = parseFloat(p.irr) - parseFloat(payload.targetReturn);
-    verdict.className = 'verdict-bar ' + (diff >= 1 ? 'go' : diff >= -1 ? 'borderline' : 'nogo');
+  const downPayment = purchasePrice * downPct;
+  const loanAmount  = purchasePrice - downPayment;
+  const mortgage    = calcMortgage(loanAmount, interestRate, loanTerm, isIO);
 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  const totalMonthlyExp = taxes + insurance + hoa + maintenance + mgmt + capex + other;
+  const effectiveRentYr1 = monthlyRent * 12 * (1 - vacancyRate);
+  const annualExp    = totalMonthlyExp * 12;
+  const annualMtg    = mortgage * 12;
+  const annualNOI    = effectiveRentYr1 - annualExp;
+  const annualCF     = annualNOI - annualMtg;
+  const monthlyCF    = annualCF / 12;
+  const cocReturn    = downPayment > 0 ? (annualCF / downPayment) * 100 : 0;
+  const capRate      = (annualNOI / purchasePrice) * 100;
+  const grm          = purchasePrice / (monthlyRent * 12);
+  const breakEven    = (mortgage + totalMonthlyExp) / (1 - vacancyRate);
 
-  } catch (err) {
-    errorMsg.textContent = 'Something went wrong: ' + err.message + '. Please try again.';
-    errorMsg.classList.add('show');
-    btn.disabled = false;
-    btn.innerHTML = 'Request My Report <svg class="btn-arrow" viewBox="0 0 16 16"><line x1="2" y1="8" x2="14" y2="8"/><polyline points="9,3 14,8 9,13"/></svg>';
+  // IRR
+  const flows = [-downPayment];
+  for (let yr = 1; yr <= holdPeriod; yr++) {
+    const rent = monthlyRent * 12 * Math.pow(1+rentGrowth, yr-1) * (1-vacancyRate);
+    const cf = rent - annualExp - annualMtg;
+    if (yr === holdPeriod) {
+      const exitPrice = purchasePrice * Math.pow(1+appreciation, holdPeriod);
+      const exitCost  = exitPrice * sellingCosts;
+      let balance = loanAmount;
+      if (!isIO) {
+        const r = interestRate / 100 / 12;
+        const n = loanTerm * 12;
+        const pm = holdPeriod * 12;
+        balance = loanAmount * (Math.pow(1+r,n) - Math.pow(1+r,pm)) / (Math.pow(1+r,n)-1);
+      }
+      flows.push(cf + exitPrice - exitCost - balance);
+    } else {
+      flows.push(cf);
+    }
+  }
+
+  const irrDecimal = calcIRR(flows);
+  const irrPct = irrDecimal * 100;
+
+  // Max price (binary search on CoC)
+  function cocAtPrice(price) {
+    const dp = price * downPct;
+    const ln = price - dp;
+    const mt = calcMortgage(ln, interestRate, loanTerm, isIO);
+    return (effectiveRentYr1 - annualExp - mt*12) / dp;
+  }
+  let lo = purchasePrice * 0.2, hi = purchasePrice * 3;
+  for (let i = 0; i < 60; i++) {
+    const mid = (lo+hi)/2;
+    if (cocAtPrice(mid) > targetReturn) lo = mid; else hi = mid;
+  }
+  const maxPrice = (lo+hi)/2;
+
+  hasResults = true;
+  updateUI({ mortgage, monthlyCF, cocReturn, capRate, grm, breakEven, irrPct, maxPrice, targetReturn: targetReturn*100 });
+}
+
+function updateUI(r) {
+  // IRR
+  const irrEl = document.getElementById('r-irr');
+  irrEl.textContent = fmtPct(r.irrPct);
+  irrEl.classList.remove('empty', 'gold', 'green', 'red');
+  irrEl.classList.add(r.irrPct >= r.targetReturn ? 'green' : 'red');
+
+  const diff = r.irrPct - r.targetReturn;
+  document.getElementById('r-irr-delta').textContent =
+    (diff >= 0 ? '+' : '') + diff.toFixed(1) + '% vs. your target';
+
+  // CoC
+  const cocEl = document.getElementById('r-coc');
+  cocEl.textContent = fmtPct(r.cocReturn);
+  cocEl.classList.remove('empty', 'green', 'red');
+  cocEl.classList.add(r.cocReturn >= 0 ? 'green' : 'red');
+
+  // Cash flow
+  const cfEl = document.getElementById('r-cashflow');
+  cfEl.textContent = (r.monthlyCF >= 0 ? '+' : '') + fmt(r.monthlyCF) + '/mo';
+  cfEl.classList.remove('empty', 'green', 'red');
+  cfEl.classList.add(r.monthlyCF >= 0 ? 'green' : 'red');
+
+  // Cap rate
+  const crEl = document.getElementById('r-caprate');
+  crEl.textContent = fmtPct(r.capRate);
+  crEl.classList.remove('empty');
+
+  // Gauge
+  const gaugeRatio = r.targetReturn > 0 ? Math.min((r.irrPct / r.targetReturn) * 100, 120) : 0;
+  document.getElementById('gaugeBar').style.width = Math.max(0, gaugeRatio) + '%';
+  document.getElementById('r-gauge-pct').textContent = fmtPct(gaugeRatio) + ' of target';
+
+  // Extra metrics
+  setExtra('r-mortgage',  fmt(r.mortgage) + '/mo');
+  setExtra('r-breakeven', fmt(r.breakEven) + '/mo');
+  setExtra('r-maxprice',  fmt(r.maxPrice));
+  setExtra('r-grm',       r.grm.toFixed(1) + 'x');
+
+  // Verdict
+  const banner = document.getElementById('verdictBanner');
+  const main   = document.getElementById('verdictMain');
+  const sub    = document.getElementById('verdictSub');
+  const icon   = banner.querySelector('.verdict-icon');
+
+  banner.classList.remove('empty', 'go', 'borderline', 'nogo');
+
+  if (diff >= 1) {
+    banner.classList.add('go');
+    icon.textContent = '✓';
+    main.textContent = 'Go — Investment meets your target';
+    sub.textContent  = 'IRR exceeds required return by ' + diff.toFixed(1) + '%';
+  } else if (diff >= -1) {
+    banner.classList.add('borderline');
+    icon.textContent = '⚡';
+    main.textContent = 'Borderline — Negotiate the price';
+    sub.textContent  = 'IRR is within 1% of your target';
+  } else {
+    banner.classList.add('nogo');
+    icon.textContent = '✗';
+    main.textContent = 'No-Go — Misses your target return';
+    sub.textContent  = 'IRR is ' + Math.abs(diff).toFixed(1) + '% below your minimum';
   }
 }
+
+function setExtra(id, val) {
+  const el = document.getElementById(id);
+  el.textContent = val;
+  el.classList.remove('empty');
+}
+
+function showEmpty() {
+  hasResults = false;
+  const ids = ['r-irr','r-coc','r-cashflow','r-caprate','r-mortgage','r-breakeven','r-maxprice','r-grm'];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    el.textContent = '—';
+    el.className = el.className.includes('extra') ? 'extra-val empty' : 'metric-value empty';
+  });
+  document.getElementById('gaugeBar').style.width = '0%';
+  document.getElementById('r-gauge-pct').textContent = '—';
+  const banner = document.getElementById('verdictBanner');
+  banner.className = 'verdict-banner empty';
+  banner.querySelector('.verdict-icon').textContent = '⚡';
+  document.getElementById('verdictMain').textContent = 'Enter your property details';
+  document.getElementById('verdictSub').textContent = 'Results update instantly as you type';
+}
+
+function submitReport() {
+  const name  = document.getElementById('cta-name').value.trim();
+  const email = document.getElementById('cta-email').value.trim();
+  if (!email) { document.getElementById('cta-email').focus(); return; }
+
+  const btn = document.querySelector('.cta-submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+
+  // Send via Resend serverless function
+  const data = {
+    name, email,
+    address:       document.getElementById('address').value,
+    purchasePrice: document.getElementById('purchasePrice').value,
+    monthlyRent:   document.getElementById('monthlyRent').value,
+    propType:      document.getElementById('propType').value,
+  };
+
+  fetch('/.netlify/functions/analyze', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).catch(() => {}).finally(() => {
+    document.getElementById('ctaForm').style.display = 'none';
+    document.getElementById('ctaSuccess').classList.add('show');
+  });
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+applyDefaults();
 </script>
 </body>
 </html>
