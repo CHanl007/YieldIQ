@@ -635,6 +635,129 @@
     line-height: 1.5;
   }
 
+
+  /* ── WEALTH BREAKDOWN ── */
+  .wealth-breakdown {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+
+  .wealth-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .wealth-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .wealth-risk-badge {
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+  }
+
+  .wealth-risk-badge.low    { background: rgba(26,122,82,0.25);  color: #4ade80; border: 1px solid rgba(26,122,82,0.4); }
+  .wealth-risk-badge.medium { background: rgba(184,146,46,0.2);  color: var(--gold-lt); border: 1px solid rgba(184,146,46,0.35); }
+  .wealth-risk-badge.high   { background: rgba(192,57,43,0.2);   color: #f87171; border: 1px solid rgba(192,57,43,0.35); }
+  .wealth-risk-badge.empty  { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.1); }
+
+  /* Stacked bar */
+  .wealth-bar-wrap {
+    height: 10px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 5px;
+    overflow: hidden;
+    display: flex;
+    margin-bottom: 12px;
+  }
+
+  .wealth-bar-cf {
+    height: 100%;
+    background: #4ade80;
+    transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+    width: 0%;
+  }
+
+  .wealth-bar-principal {
+    height: 100%;
+    background: var(--gold-lt);
+    transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+    width: 0%;
+  }
+
+  .wealth-bar-appreciation {
+    height: 100%;
+    background: #60a5fa;
+    transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+    width: 0%;
+  }
+
+  /* Legend */
+  .wealth-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .wealth-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+  }
+
+  .wealth-dot {
+    width: 8px; height: 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .wealth-dot.cf           { background: #4ade80; }
+  .wealth-dot.principal    { background: var(--gold-lt); }
+  .wealth-dot.appreciation { background: #60a5fa; }
+
+  .wealth-row-label { color: rgba(255,255,255,0.5); flex: 1; }
+
+  .wealth-row-pct {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.7);
+    font-weight: 500;
+    min-width: 36px;
+    text-align: right;
+  }
+
+  .wealth-row-amt {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.35);
+    min-width: 64px;
+    text-align: right;
+  }
+
+  .wealth-insight {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.38);
+    line-height: 1.5;
+    font-style: italic;
+  }
+
   /* ── MOBILE ── */
   @media (max-width: 900px) {
     .analyzer-layout {
@@ -961,6 +1084,41 @@
       </div>
     </div>
 
+
+    <!-- Wealth Breakdown -->
+    <div class="wealth-breakdown">
+      <div class="wealth-header">
+        <span class="wealth-title">Where Your Wealth Comes From</span>
+        <span class="wealth-risk-badge empty" id="wealthRiskBadge">—</span>
+      </div>
+      <div class="wealth-bar-wrap">
+        <div class="wealth-bar-cf" id="wealthBarCF"></div>
+        <div class="wealth-bar-principal" id="wealthBarPrincipal"></div>
+        <div class="wealth-bar-appreciation" id="wealthBarAppreciation"></div>
+      </div>
+      <div class="wealth-legend">
+        <div class="wealth-row">
+          <span class="wealth-dot cf"></span>
+          <span class="wealth-row-label">Cash Flow</span>
+          <span class="wealth-row-pct" id="wealthPctCF">—</span>
+          <span class="wealth-row-amt" id="wealthAmtCF">—</span>
+        </div>
+        <div class="wealth-row">
+          <span class="wealth-dot principal"></span>
+          <span class="wealth-row-label">Principal Paydown</span>
+          <span class="wealth-row-pct" id="wealthPctPrincipal">—</span>
+          <span class="wealth-row-amt" id="wealthAmtPrincipal">—</span>
+        </div>
+        <div class="wealth-row">
+          <span class="wealth-dot appreciation"></span>
+          <span class="wealth-row-label">Appreciation</span>
+          <span class="wealth-row-pct" id="wealthPctAppreciation">—</span>
+          <span class="wealth-row-amt" id="wealthAmtAppreciation">—</span>
+        </div>
+      </div>
+      <div class="wealth-insight" id="wealthInsight"></div>
+    </div>
+
     <!-- Additional metrics -->
     <div class="extra-metrics">
       <div class="extra-row">
@@ -1163,6 +1321,32 @@ function recalc() {
   const irrDecimal = calcIRR(flows);
   const irrPct = irrDecimal * 100;
 
+  // Wealth breakdown — decompose total return into 3 sources
+  // 1. Total cash flow over hold period (sum of annual CFs excluding exit)
+  let totalCashFlow = 0;
+  for (let yr = 1; yr <= holdPeriod; yr++) {
+    const rent = monthlyRent * 12 * Math.pow(1+rentGrowth, yr-1) * (1-vacancyRate);
+    totalCashFlow += rent - annualExp - annualMtg;
+  }
+
+  // 2. Appreciation gain (exit price minus purchase price minus selling costs)
+  const exitPrice = purchasePrice * Math.pow(1+appreciation, holdPeriod);
+  const exitCost  = exitPrice * sellingCosts;
+  const appreciationGain = exitPrice - exitCost - purchasePrice;
+
+  // 3. Principal paydown (loan balance reduction over hold period)
+  let endBalance = loanAmount;
+  if (!isIO) {
+    const r2 = interestRate / 100 / 12;
+    const n2 = loanTerm * 12;
+    const pm2 = holdPeriod * 12;
+    endBalance = loanAmount * (Math.pow(1+r2,n2) - Math.pow(1+r2,pm2)) / (Math.pow(1+r2,n2)-1);
+  }
+  const principalPaydown = loanAmount - endBalance;
+
+  // Total wealth created (can include negative CF)
+  const totalWealth = totalCashFlow + appreciationGain + principalPaydown;
+
   // Max price (binary search on CoC)
   function cocAtPrice(price) {
     const dp = price * downPct;
@@ -1178,7 +1362,8 @@ function recalc() {
   const maxPrice = (lo+hi)/2;
 
   hasResults = true;
-  updateUI({ mortgage, monthlyCF, cocReturn, capRate, grm, breakEven, irrPct, maxPrice, targetReturn: targetReturn*100 });
+  updateUI({ mortgage, monthlyCF, cocReturn, capRate, grm, breakEven, irrPct, maxPrice, targetReturn: targetReturn*100,
+    totalCashFlow, appreciationGain, principalPaydown, totalWealth });
 }
 
 function updateUI(r) {
@@ -1220,6 +1405,9 @@ function updateUI(r) {
   setExtra('r-maxprice',  fmt(r.maxPrice));
   setExtra('r-grm',       r.grm.toFixed(1) + 'x');
 
+  // Wealth breakdown
+  updateWealthBreakdown(r);
+
   // Verdict
   const banner = document.getElementById('verdictBanner');
   const main   = document.getElementById('verdictMain');
@@ -1243,6 +1431,59 @@ function updateUI(r) {
     icon.textContent = '✗';
     main.textContent = 'No-Go — Misses your target return';
     sub.textContent  = 'IRR is ' + Math.abs(diff).toFixed(1) + '% below your minimum';
+  }
+}
+
+function updateWealthBreakdown(r) {
+  const total = r.totalWealth;
+  if (total === 0) return;
+
+  const cfPct   = Math.max(0, (r.totalCashFlow   / total) * 100);
+  const prPct   = Math.max(0, (r.principalPaydown/ total) * 100);
+  const apPct   = Math.max(0, (r.appreciationGain/ total) * 100);
+
+  // Normalize to 100% (handle negatives)
+  const posTotal = Math.max(cfPct + prPct + apPct, 0.001);
+  const cfN  = (cfPct  / posTotal) * 100;
+  const prN  = (prPct  / posTotal) * 100;
+  const apN  = (apPct  / posTotal) * 100;
+
+  document.getElementById('wealthBarCF').style.width           = cfN + '%';
+  document.getElementById('wealthBarPrincipal').style.width    = prN + '%';
+  document.getElementById('wealthBarAppreciation').style.width = apN + '%';
+
+  const fmt2 = n => '$' + Math.abs(Math.round(n)).toLocaleString();
+  const pct2 = n => (n >= 0 ? '' : '-') + Math.abs(n).toFixed(0) + '%';
+
+  document.getElementById('wealthPctCF').textContent           = pct2(cfPct);
+  document.getElementById('wealthPctPrincipal').textContent    = pct2(prPct);
+  document.getElementById('wealthPctAppreciation').textContent = pct2(apPct);
+
+  document.getElementById('wealthAmtCF').textContent           = (r.totalCashFlow >= 0 ? '+' : '-') + fmt2(r.totalCashFlow);
+  document.getElementById('wealthAmtPrincipal').textContent    = '+' + fmt2(r.principalPaydown);
+  document.getElementById('wealthAmtAppreciation').textContent = (r.appreciationGain >= 0 ? '+' : '-') + fmt2(r.appreciationGain);
+
+  // Risk badge & insight
+  const badge   = document.getElementById('wealthRiskBadge');
+  const insight = document.getElementById('wealthInsight');
+  badge.classList.remove('low','medium','high','empty');
+
+  if (cfN >= 50) {
+    badge.classList.add('low');
+    badge.textContent = 'Income-Driven';
+    insight.textContent = 'Over half your return comes from cash flow — this is a well-supported, income-driven investment. Less dependent on market conditions.';
+  } else if (cfN >= 30) {
+    badge.classList.add('medium');
+    badge.textContent = 'Balanced';
+    insight.textContent = 'A balanced return between income and appreciation. Solid fundamentals with moderate market dependency.';
+  } else if (apN >= 70) {
+    badge.classList.add('high');
+    badge.textContent = 'Appreciation-Dependent';
+    insight.textContent = 'Over 70% of your projected wealth comes from appreciation — a market bet, not an income investment. If appreciation comes in at 1% instead of 3%, your returns will drop significantly.';
+  } else {
+    badge.classList.add('medium');
+    badge.textContent = 'Growth-Oriented';
+    insight.textContent = 'This property leans on appreciation and principal paydown for returns. Know your market before committing.';
   }
 }
 
