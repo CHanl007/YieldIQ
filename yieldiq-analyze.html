@@ -1425,6 +1425,14 @@
           </div>
           <span class="field-hint auto-note">YieldIQ estimate</span>
         </div>
+        <div class="field">
+          <label><span class="field-label-wrap">Annual Expense Growth<span class="tooltip-icon">i<span class="tooltip-text">How much your fixed expenses (taxes, insurance, HOA, maintenance, CapEx) will grow each year. In Florida, insurance alone has been running 5-10% annually. A 3% default is conservative — adjust higher to stress test your returns.</span></span></span></label>
+          <div class="input-wrap">
+            <input type="number" id="expenseGrowth" class="has-suffix auto-filled" value="3" step="0.1" oninput="clearAuto(this); recalc()"/>
+            <span class="input-suffix">%</span>
+          </div>
+          <span class="field-hint auto-note">Applied to taxes, insurance, HOA, maintenance & CapEx</span>
+        </div>
       </div>
     </div>
 
@@ -1803,7 +1811,8 @@ function recalc() {
   const other        = getVal('other');
   const holdPeriod   = parseInt(document.getElementById('holdPeriod').value);
   const targetReturn = getVal('targetReturn', 10) / 100;
-  const sellingCosts = getVal('sellingCosts', 6) / 100;
+  const sellingCosts  = getVal('sellingCosts', 6) / 100;
+  const expenseGrowth = getVal('expenseGrowth', 3) / 100;
 
   const downPayment = purchasePrice * downPct;
   const loanAmount  = purchasePrice - downPayment;
@@ -1821,11 +1830,17 @@ function recalc() {
   const grm          = purchasePrice / (monthlyRent * 12);
   const breakEven    = (mortgage + totalMonthlyExp) / (1 - vacancyRate);
 
-  // IRR
+  // IRR — expenses grow annually (taxes, insurance, HOA, maintenance, capex)
+  // mgmt grows with rent automatically; other/mortgage stay fixed
+  const fixedMonthlyExp = taxes + insurance + hoa + maintenance + capex;
+  const varMonthlyExp   = mgmt + other; // mgmt tied to rent, other stays fixed
   const flows = [-downPayment];
   for (let yr = 1; yr <= holdPeriod; yr++) {
     const rent = monthlyRent * 12 * Math.pow(1+rentGrowth, yr-1) * (1-vacancyRate);
-    const cf = rent - annualExp - annualMtg;
+    const mgmtThisYear = mgmt > 0 ? (rent * (mgmt / (monthlyRent * 12 * (1-vacancyRate)))) : 0;
+    const fixedExpThisYear = fixedMonthlyExp * 12 * Math.pow(1+expenseGrowth, yr-1);
+    const totalExpThisYear = fixedExpThisYear + (other * 12) + mgmtThisYear;
+    const cf = rent - totalExpThisYear - annualMtg;
     if (yr === holdPeriod) {
       const exitPrice = purchasePrice * Math.pow(1+appreciation, holdPeriod);
       const exitCost  = exitPrice * sellingCosts;
@@ -1850,7 +1865,10 @@ function recalc() {
   let totalCashFlow = 0;
   for (let yr = 1; yr <= holdPeriod; yr++) {
     const rent = monthlyRent * 12 * Math.pow(1+rentGrowth, yr-1) * (1-vacancyRate);
-    totalCashFlow += rent - annualExp - annualMtg;
+    const mgmtThisYearCF = mgmt > 0 ? (rent * (mgmt / (monthlyRent * 12 * (1-vacancyRate)))) : 0;
+    const fixedExpCF = fixedMonthlyExp * 12 * Math.pow(1+expenseGrowth, yr-1);
+    const totalExpCF = fixedExpCF + (other * 12) + mgmtThisYearCF;
+    totalCashFlow += rent - totalExpCF - annualMtg;
   }
 
   // 2. Appreciation gain (exit price minus purchase price minus selling costs)
@@ -1881,7 +1899,10 @@ function recalc() {
     const f = [-dp];
     for (let yr = 1; yr <= holdPeriod; yr++) {
       const rent = monthlyRent * 12 * Math.pow(1+rentGrowth, yr-1) * (1-vacancyRate);
-      const cf = rent - annualExp - annMt;
+      const mgmtYr = mgmt > 0 ? (rent * (mgmt / (monthlyRent * 12 * (1-vacancyRate)))) : 0;
+      const fixedYr = fixedMonthlyExp * 12 * Math.pow(1+expenseGrowth, yr-1);
+      const totalExpYr = fixedYr + (other * 12) + mgmtYr;
+      const cf = rent - totalExpYr - annMt;
       if (yr === holdPeriod) {
         const ep = price * Math.pow(1+appreciation, holdPeriod);
         const ec = ep * sellingCosts;
