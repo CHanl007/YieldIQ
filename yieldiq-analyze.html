@@ -759,6 +759,70 @@
   }
 
 
+
+  /* ── TOOLTIPS ── */
+  .field-label-wrap {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .tooltip-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+    background: var(--border);
+    border-radius: 50%;
+    font-size: 0.6rem;
+    color: var(--ink-muted);
+    cursor: help;
+    flex-shrink: 0;
+    position: relative;
+    font-style: normal;
+    font-weight: 700;
+    transition: background 0.2s;
+  }
+
+  .tooltip-icon:hover { background: var(--navy); color: #fff; }
+
+  .tooltip-icon .tooltip-text {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 8px;
+    background: var(--navy);
+    color: rgba(255,255,255,0.85);
+    font-size: 0.72rem;
+    font-weight: 400;
+    line-height: 1.5;
+    padding: 8px 12px;
+    border-radius: 5px;
+    width: 220px;
+    text-align: left;
+    z-index: 999;
+    pointer-events: none;
+    box-shadow: 0 4px 16px rgba(11,31,58,0.2);
+    font-family: 'Syne', sans-serif;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .tooltip-icon .tooltip-text::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--navy);
+  }
+
+  .tooltip-icon:hover .tooltip-text { display: block; }
+
   /* ── INVESTOR GOAL SELECTION ── */
   .goal-section {
     padding: 32px 0 20px;
@@ -1195,7 +1259,7 @@
           </select>
         </div>
         <div class="field">
-          <label>Purchase Price <span class="required">*</span></label>
+          <label><span class="field-label-wrap">Purchase Price<span class="tooltip-icon">i<span class="tooltip-text">The total price you expect to pay for the property, before any financing.</span></span></span> <span class="required">*</span></label>
           <div class="input-wrap">
             <span class="input-prefix">$</span>
             <input type="number" id="purchasePrice" class="has-prefix" placeholder="450,000" oninput="onPriceChange(); recalc()"/>
@@ -1228,7 +1292,7 @@
       </div>
       <div class="field-grid">
         <div class="field">
-          <label>Down Payment <span class="required">*</span></label>
+          <label><span class="field-label-wrap">Down Payment<span class="tooltip-icon">i<span class="tooltip-text">The percentage of the purchase price you pay upfront in cash. Investment properties typically require 20-25%.</span></span></span> <span class="required">*</span></label>
           <div class="input-wrap">
             <input type="number" id="downPaymentPct" class="has-suffix" placeholder="25" oninput="recalc()"/>
             <span class="input-suffix">%</span>
@@ -1236,14 +1300,14 @@
           <span class="field-hint">Typical: 20–25% for investment properties</span>
         </div>
         <div class="field">
-          <label>Interest Rate <span class="required">*</span></label>
+          <label><span class="field-label-wrap">Interest Rate<span class="tooltip-icon">i<span class="tooltip-text">The annual interest rate on your mortgage. Check current rates with your lender.</span></span></span> <span class="required">*</span></label>
           <div class="input-wrap">
             <input type="number" id="interestRate" class="has-suffix" placeholder="7.25" step="0.01" oninput="recalc()"/>
             <span class="input-suffix">%</span>
           </div>
         </div>
         <div class="field">
-          <label>Loan Term</label>
+          <label><span class="field-label-wrap">Loan Term<span class="tooltip-icon">i<span class="tooltip-text">How many years until your mortgage is fully paid off. Longer terms mean lower monthly payments but more interest paid overall.</span></span></span></label>
           <select id="loanTerm" onchange="recalc()">
             <option value="30">30 years</option>
             <option value="20">20 years</option>
@@ -1252,7 +1316,7 @@
           </select>
         </div>
         <div class="field">
-          <label>Loan Type</label>
+          <label><span class="field-label-wrap">Loan Type<span class="tooltip-icon">i<span class="tooltip-text">Conventional: fixed principal + interest payments. Interest Only: lower payments early but no equity buildup. ARM: rate adjusts after an initial fixed period.</span></span></span></label>
           <div class="toggle-group">
             <input type="radio" name="loanType" id="lt-conv" value="conventional" checked onchange="recalc()"/>
             <label for="lt-conv">Conventional</label>
@@ -1273,7 +1337,7 @@
       </div>
       <div class="field-grid">
         <div class="field">
-          <label>Gross Monthly Rent <span class="required">*</span></label>
+          <label><span class="field-label-wrap">Gross Monthly Rent<span class="tooltip-icon">i<span class="tooltip-text">The total rent you expect to collect each month across all units before any expenses.</span></span></span> <span class="required">*</span></label>
           <div class="input-wrap">
             <span class="input-prefix">$</span>
             <input type="number" id="monthlyRent" class="has-prefix" placeholder="2,800" oninput="recalc()"/>
@@ -1281,7 +1345,7 @@
           <span class="field-hint">Total rent across all units</span>
         </div>
         <div class="field">
-          <label>Vacancy Rate</label>
+          <label><span class="field-label-wrap">Vacancy Rate<span class="tooltip-icon">i<span class="tooltip-text">The percentage of time the property sits empty with no tenant. A 5% vacancy rate means roughly 18 days per year without rent.</span></span></span></label>
           <div class="input-wrap">
             <input type="number" id="vacancyRate" class="has-suffix auto-filled" oninput="clearAuto(this); recalc()"/>
             <span class="input-suffix">%</span>
@@ -1289,7 +1353,7 @@
           <span class="field-hint auto-note" id="hint-vacancy">YieldIQ default — edit to override</span>
         </div>
         <div class="field">
-          <label>Annual Rent Growth</label>
+          <label><span class="field-label-wrap">Annual Rent Growth<span class="tooltip-icon">i<span class="tooltip-text">How much you expect rents to increase each year, as a percentage. Historical average is 2-4% nationally.</span></span></span></label>
           <div class="input-wrap">
             <input type="number" id="rentGrowth" class="has-suffix auto-filled" step="0.1" oninput="clearAuto(this); recalc()"/>
             <span class="input-suffix">%</span>
@@ -1297,7 +1361,7 @@
           <span class="field-hint auto-note">YieldIQ default — edit to override</span>
         </div>
         <div class="field">
-          <label>Expected Appreciation</label>
+          <label><span class="field-label-wrap">Expected Appreciation<span class="tooltip-icon">i<span class="tooltip-text">How much you expect the property value to grow each year. This is a key driver of long-term returns.</span></span></span></label>
           <div class="input-wrap">
             <input type="number" id="appreciation" class="has-suffix auto-filled" step="0.1" oninput="clearAuto(this); recalc()"/>
             <span class="input-suffix">%</span>
@@ -1316,14 +1380,14 @@
       </div>
       <div class="field-grid thirds">
         <div class="field">
-          <label>Property Taxes</label>
+          <label><span class="field-label-wrap">Property Taxes<span class="tooltip-icon">i<span class="tooltip-text">Your estimated monthly property tax bill. Check your county's property appraiser website for accurate figures.</span></span></span></label>
           <div class="input-wrap">
             <span class="input-prefix">$</span>
             <input type="number" id="taxes" class="has-prefix" placeholder="400" oninput="recalc()"/>
           </div>
         </div>
         <div class="field">
-          <label>Insurance</label>
+          <label><span class="field-label-wrap">Insurance<span class="tooltip-icon">i<span class="tooltip-text">Monthly homeowners or landlord insurance premium. Florida properties typically run higher due to hurricane risk.</span></span></span></label>
           <div class="input-wrap">
             <span class="input-prefix">$</span>
             <input type="number" id="insurance" class="has-prefix auto-filled" oninput="clearAuto(this); recalc()"/>
@@ -1331,14 +1395,14 @@
           <span class="field-hint auto-note">YieldIQ estimate</span>
         </div>
         <div class="field">
-          <label>HOA Fees</label>
+          <label><span class="field-label-wrap">HOA Fees<span class="tooltip-icon">i<span class="tooltip-text">Monthly Homeowners Association fees if applicable. These can significantly impact cash flow.</span></span></span></label>
           <div class="input-wrap">
             <span class="input-prefix">$</span>
             <input type="number" id="hoa" class="has-prefix" placeholder="0" oninput="recalc()"/>
           </div>
         </div>
         <div class="field">
-          <label>Maintenance</label>
+          <label><span class="field-label-wrap">Maintenance<span class="tooltip-icon">i<span class="tooltip-text">Monthly budget for repairs and upkeep. A common rule of thumb is 1% of the property value per year.</span></span></span></label>
           <div class="input-wrap">
             <span class="input-prefix">$</span>
             <input type="number" id="maintenance" class="has-prefix auto-filled" oninput="clearAuto(this); recalc()"/>
@@ -1346,7 +1410,7 @@
           <span class="field-hint auto-note">YieldIQ estimate (1% rule)</span>
         </div>
         <div class="field">
-          <label>Property Mgmt</label>
+          <label><span class="field-label-wrap">Property Mgmt<span class="tooltip-icon">i<span class="tooltip-text">Monthly fee if you hire a property manager. Typically 8-10% of collected rent.</span></span></span></label>
           <div class="input-wrap">
             <span class="input-prefix">$</span>
             <input type="number" id="mgmt" class="has-prefix auto-filled" oninput="clearAuto(this); recalc()"/>
@@ -1354,7 +1418,7 @@
           <span class="field-hint auto-note">YieldIQ estimate</span>
         </div>
         <div class="field">
-          <label>CapEx Reserve</label>
+          <label><span class="field-label-wrap">CapEx Reserve<span class="tooltip-icon">i<span class="tooltip-text">Capital Expenditure reserve — money set aside monthly for major future expenses like a new roof, HVAC, or appliances.</span></span></span></label>
           <div class="input-wrap">
             <span class="input-prefix">$</span>
             <input type="number" id="capex" class="has-prefix auto-filled" oninput="clearAuto(this); recalc()"/>
@@ -1372,7 +1436,7 @@
       </div>
       <div class="field-grid">
         <div class="field">
-          <label>Hold Period</label>
+          <label><span class="field-label-wrap">Hold Period<span class="tooltip-icon">i<span class="tooltip-text">How many years you plan to own the property before selling. Longer holds typically improve returns.</span></span></span></label>
           <select id="holdPeriod" onchange="recalc()">
             <option value="5">5 years</option>
             <option value="7">7 years</option>
@@ -1382,7 +1446,7 @@
           </select>
         </div>
         <div class="field">
-          <label>Required Return (IRR)</label>
+          <label><span class="field-label-wrap">Required Return<span class="tooltip-icon">i<span class="tooltip-text">The minimum IRR (annual return) you would accept to make this investment worthwhile. Think of it as your personal hurdle rate.</span></span></span> (IRR)</label>
           <div class="input-wrap">
             <input type="number" id="targetReturn" class="has-suffix" placeholder="10" step="0.1" oninput="recalc()"/>
             <span class="input-suffix">%</span>
@@ -1390,7 +1454,7 @@
           <span class="field-hint">Minimum IRR you'd accept</span>
         </div>
         <div class="field">
-          <label>Selling Costs at Exit</label>
+          <label><span class="field-label-wrap">Selling Costs<span class="tooltip-icon">i<span class="tooltip-text">Costs to sell the property at exit — typically 5-6% covering realtor commissions and closing costs.</span></span></span> at Exit</label>
           <div class="input-wrap">
             <input type="number" id="sellingCosts" class="has-suffix auto-filled" step="0.1" oninput="clearAuto(this); recalc()"/>
             <span class="input-suffix">%</span>
@@ -1807,22 +1871,39 @@ function recalc() {
   // Total wealth created (can include negative CF)
   const totalWealth = totalCashFlow + appreciationGain + principalPaydown;
 
-  // Max price (binary search on CoC)
-  function cocAtPrice(price) {
+  // Max price — IRR-based binary search (NPV = 0 at target return)
+  // Find the price where IRR of all cash flows = targetReturn
+  function irrAtPrice(price) {
     const dp = price * downPct;
     const ln = price - dp;
     const mt = calcMortgage(ln, interestRate, loanTerm, isIO);
-    return (effectiveRentYr1 - annualExp - mt*12) / dp;
+    const annMt = mt * 12;
+    const f = [-dp];
+    for (let yr = 1; yr <= holdPeriod; yr++) {
+      const rent = monthlyRent * 12 * Math.pow(1+rentGrowth, yr-1) * (1-vacancyRate);
+      const cf = rent - annualExp - annMt;
+      if (yr === holdPeriod) {
+        const ep = price * Math.pow(1+appreciation, holdPeriod);
+        const ec = ep * sellingCosts;
+        let bal = ln;
+        if (!isIO) {
+          const r2 = interestRate/100/12; const n2 = loanTerm*12; const pm2 = holdPeriod*12;
+          if (Math.pow(1+r2,n2) > 1) bal = ln*(Math.pow(1+r2,n2)-Math.pow(1+r2,pm2))/(Math.pow(1+r2,n2)-1);
+        }
+        f.push(cf + ep - ec - bal);
+      } else { f.push(cf); }
+    }
+    return calcIRR(f) * 100;
   }
-  let lo = purchasePrice * 0.2, hi = purchasePrice * 3;
-  for (let i = 0; i < 60; i++) {
-    const mid = (lo+hi)/2;
-    if (cocAtPrice(mid) > targetReturn) lo = mid; else hi = mid;
+  let lo = purchasePrice * 0.1, hi = purchasePrice * 4;
+  for (let i = 0; i < 80; i++) {
+    const mid = (lo + hi) / 2;
+    if (irrAtPrice(mid) > targetReturn * 100) lo = mid; else hi = mid;
   }
-  const maxPrice = (lo+hi)/2;
+  const maxPrice = (lo + hi) / 2;
 
   // Strike rate
-  const strikeRateVal = calcStrikeRate(loanAmount, loanTerm, isIO, monthlyRent, annualExp, vacancyRate);
+  const strikeRateVal = calcStrikeRate(loanAmount, loanTerm, isIO, monthlyRent, annualExp, vacancyRate, interestRate, mortgage);
 
   hasResults = true;
   console.log('About to call updateUI, irrPct=', irrPct, 'mortgage=', mortgage);
@@ -1902,12 +1983,15 @@ function updateUI(r) {
     if (srVal) srVal.textContent = r.strikeRate.toFixed(2) + '%';
     const gap = r.interestRate - r.strikeRate;
     if (srDesc) {
-      if (r.strikeRate < r.interestRate) {
-        srDesc.textContent = 'If rates drop to ' + r.strikeRate.toFixed(2) + '%, refinancing would flip your cash flow positive. You are currently ' + gap.toFixed(2) + '% above your strike rate.';
-        if (srDist) { srDist.textContent = gap.toFixed(2) + '% above strike rate'; srDist.className = 'strike-rate-distance ' + (gap <= 0.5 ? 'close' : gap <= 1 ? 'medium' : 'far'); }
+      if (r.strikeRate && r.strikeRate < r.interestRate) {
+        const closingCosts = Math.round(r.loanAmount * 0.02).toLocaleString();
+        const monthlySavings = Math.round((calcMortgage(r.loanAmount, r.strikeRate, r.loanTerm, r.isIO) - calcMortgage(r.loanAmount, r.interestRate, r.loanTerm, r.isIO)) * -1);
+        srDesc.textContent = 'At ' + r.strikeRate.toFixed(2) + '%, refinancing breaks even within 24 months on ~$' + closingCosts + ' in closing costs. You are ' + gap.toFixed(2) + '% away from your strike rate.';
+        if (srDist) { srDist.textContent = gap.toFixed(2) + '% away from strike rate'; srDist.className = 'strike-rate-distance ' + (gap <= 0.5 ? 'close' : gap <= 1 ? 'medium' : 'far'); }
       } else {
-        srDesc.textContent = 'Your current rate already supports positive cash flow. Your strike rate is ' + r.strikeRate.toFixed(2) + '% — you are already in the green zone.';
-        if (srDist) { srDist.textContent = 'Already at or below strike rate ✓'; srDist.className = 'strike-rate-distance close'; }
+        if (srVal) srVal.textContent = '—';
+        if (srDesc) srDesc.textContent = 'Refinancing does not currently make financial sense — rates would need to drop significantly for closing costs to be recovered within 24 months.';
+        if (srDist) { srDist.textContent = 'Not yet in range'; srDist.className = 'strike-rate-distance far'; }
       }
     }
   }
@@ -2078,7 +2162,7 @@ function buildAppreciationTable(p) {
 }
 
 function buildRateTable(p) {
-  const deltas = [-0.5, -0.25, 0, 0.25, 0.5, 0.75, 1.0];
+  const deltas = [-1.0, -0.75, -0.5, -0.25, 0, 0.25];
   let rows = '<tr><td style="color:rgba(255,255,255,0.3);font-size:0.6rem;padding:5px 14px 4px;" colspan="4">RATE · PAYMENT · CASH FLOW · IRR</td></tr>';
   deltas.forEach(delta => {
     const rate = Math.max(0.5, p.interestRate + delta);
@@ -2111,19 +2195,28 @@ function buildRateTable(p) {
 }
 
 // ── STRIKE RATE ───────────────────────────────────────────────
-function calcStrikeRate(loanAmount, loanTerm, isIO, monthlyRent, annualExp, vacancyRate) {
-  // Strike rate = rate where monthly cash flow = 0 (break even on cash flow)
-  const effectiveRent = monthlyRent * (1 - vacancyRate);
-  const targetMtg = effectiveRent - annualExp / 12;
-  if (targetMtg <= 0) return null;
-  // Binary search for rate where mortgage = targetMtg
-  let lo = 0.5, hi = 15;
-  for (let i = 0; i < 60; i++) {
+// Strike rate = the rate at which refinancing breaks even within 24 months
+// Break-even months = estimated closing costs / monthly payment savings
+function calcStrikeRate(loanAmount, loanTerm, isIO, monthlyRent, annualExp, vacancyRate, currentRate, currentMortgage) {
+  // Estimated refinance closing costs: ~2% of loan amount (typical)
+  const closingCosts = loanAmount * 0.02;
+  // Target payback period: 24 months
+  const targetPaybackMonths = 24;
+  // Required monthly savings to break even in 24 months
+  const requiredMonthlySavings = closingCosts / targetPaybackMonths;
+  // Strike rate = rate where new mortgage is (currentMortgage - requiredMonthlySavings)
+  const targetMortgage = currentMortgage - requiredMonthlySavings;
+  if (targetMortgage <= 0) return null;
+  // Binary search for the rate that produces targetMortgage
+  let lo = 0.5, hi = currentRate;
+  for (let i = 0; i < 80; i++) {
     const mid = (lo + hi) / 2;
     const mtg = calcMortgage(loanAmount, mid, loanTerm, isIO);
-    if (mtg > targetMtg) hi = mid; else lo = mid;
+    if (mtg > targetMortgage) hi = mid; else lo = mid;
   }
-  return (lo + hi) / 2;
+  const strikeRate = (lo + hi) / 2;
+  // Only return if meaningfully below current rate (at least 0.1%)
+  return strikeRate < currentRate - 0.1 ? strikeRate : null;
 }
 
 // ── NEEDS CHANGE PANEL ────────────────────────────────────────
