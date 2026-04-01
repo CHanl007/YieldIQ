@@ -758,6 +758,342 @@
     font-style: italic;
   }
 
+
+  /* ── INVESTOR GOAL SELECTION ── */
+  .goal-section {
+    padding: 32px 0 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .goal-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .goal-sub {
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+    margin-bottom: 16px;
+  }
+
+  .goal-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+
+  .goal-card {
+    border: 2px solid var(--border);
+    border-radius: 7px;
+    padding: 16px 12px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s, transform 0.15s;
+    text-align: center;
+    background: var(--bg);
+  }
+
+  .goal-card:hover { border-color: var(--navy); transform: translateY(-2px); }
+
+  .goal-card.selected {
+    border-color: var(--gold);
+    background: rgba(184,146,46,0.05);
+  }
+
+  .goal-card-icon { font-size: 1.6rem; margin-bottom: 8px; }
+
+  .goal-card-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+
+  .goal-card-desc {
+    font-size: 0.68rem;
+    color: var(--ink-muted);
+    line-height: 1.4;
+  }
+
+  /* ── CONDO ADVISORY ── */
+  .condo-advisory {
+    display: none;
+    background: #fff8ed;
+    border: 1px solid rgba(184,146,46,0.4);
+    border-left: 4px solid var(--gold);
+    border-radius: 6px;
+    padding: 18px 20px;
+    margin-top: 16px;
+  }
+
+  .condo-advisory.show { display: block; }
+
+  .condo-advisory-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .condo-advisory ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .condo-advisory li {
+    font-size: 0.78rem;
+    color: var(--ink-mid);
+    line-height: 1.5;
+    padding-left: 18px;
+    position: relative;
+  }
+
+  .condo-advisory li::before {
+    content: '⚠';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-size: 0.7rem;
+  }
+
+  .condo-advisory li strong { color: var(--navy); }
+
+  .condo-advisory-sb4d {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(184,146,46,0.2);
+    font-size: 0.74rem;
+    color: var(--error);
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  /* ── SENSITIVITY TABLES ── */
+  .sensitivity-section {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .sensitivity-block {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .sensitivity-header {
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .sensitivity-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.72rem;
+  }
+
+  .sensitivity-table td {
+    padding: 7px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-family: 'JetBrains Mono', monospace;
+    color: rgba(255,255,255,0.55);
+  }
+
+  .sensitivity-table td:first-child { color: rgba(255,255,255,0.4); }
+  .sensitivity-table td:not(:first-child) { text-align: right; }
+  .sensitivity-table tr:last-child td { border-bottom: none; }
+
+  .sensitivity-table tr.active-row td {
+    color: #fff;
+    background: rgba(184,146,46,0.1);
+    font-weight: 700;
+  }
+
+  .sensitivity-table tr.active-row td:first-child { color: var(--gold-lt); }
+
+  .sens-positive { color: #4ade80 !important; }
+  .sens-negative { color: #f87171 !important; }
+
+  /* ── STRIKE RATE BOX ── */
+  .strike-rate-box {
+    background: rgba(184,146,46,0.1);
+    border: 1px solid rgba(184,146,46,0.35);
+    border-radius: 6px;
+    padding: 16px;
+    margin-top: 16px;
+  }
+
+  .strike-rate-header {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+  }
+
+  .strike-rate-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--gold-lt);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .strike-rate-desc {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+
+  .strike-rate-distance {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+
+  .strike-rate-distance.close  { background: rgba(26,122,82,0.2);  color: #4ade80; }
+  .strike-rate-distance.medium { background: rgba(184,146,46,0.2); color: var(--gold-lt); }
+  .strike-rate-distance.far    { background: rgba(192,57,43,0.15); color: #f87171; }
+
+  /* ── REFINANCE TRACKER PITCH ── */
+  .refi-tracker-pitch {
+    background: rgba(11,31,58,0.6);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 6px;
+    padding: 16px;
+    margin-top: 16px;
+    text-align: center;
+  }
+
+  .refi-pitch-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+
+  .refi-pitch-desc {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+
+  .refi-pitch-btn {
+    background: var(--gold);
+    color: var(--navy);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 100%;
+  }
+
+  .refi-pitch-btn:hover { background: var(--gold-lt); }
+
+  /* ── WHAT NEEDS TO CHANGE ── */
+  .needs-change-box {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+
+  .needs-change-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 10px;
+  }
+
+  .needs-change-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 0.74rem;
+  }
+
+  .needs-change-row:last-child { border-bottom: none; }
+
+  .needs-change-icon {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .needs-change-icon.ok   { background: rgba(26,122,82,0.25);  color: #4ade80; }
+  .needs-change-icon.warn { background: rgba(184,146,46,0.2);  color: var(--gold-lt); }
+  .needs-change-icon.bad  { background: rgba(192,57,43,0.2);   color: #f87171; }
+
+  .needs-change-text { flex: 1; color: rgba(255,255,255,0.6); line-height: 1.4; }
+  .needs-change-text strong { color: #fff; }
+
+  /* ── GOAL INSIGHT ── */
+  .goal-insight-box {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    padding: 14px;
+    margin-bottom: 16px;
+    display: none;
+  }
+
+  .goal-insight-box.show { display: block; }
+
+  .goal-insight-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem;
+    color: var(--gold-lt);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+  }
+
+  .goal-insight-text {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.6;
+  }
+
+  .goal-insight-text strong { color: #fff; }
+
   /* ── MOBILE ── */
   @media (max-width: 900px) {
     .analyzer-layout {
@@ -813,6 +1149,30 @@
       <p class="page-sub">Enter your property details and watch your returns calculate in real time. Smart defaults are pre-filled based on property type — adjust any figure to match your situation.</p>
     </div>
 
+
+    <!-- INVESTOR GOAL SELECTION -->
+    <div class="goal-section">
+      <div class="goal-label">Your Investment Goal</div>
+      <p class="goal-sub">This helps YieldIQ tailor the analysis and insights to what matters most to you.</p>
+      <div class="goal-cards">
+        <div class="goal-card" id="goal-payoff" onclick="selectGoal('payoff')">
+          <div class="goal-card-icon">🏠</div>
+          <div class="goal-card-title">Own It Free & Clear</div>
+          <div class="goal-card-desc">Build equity and eliminate debt over time</div>
+        </div>
+        <div class="goal-card" id="goal-portfolio" onclick="selectGoal('portfolio')">
+          <div class="goal-card-icon">📈</div>
+          <div class="goal-card-title">Grow My Portfolio</div>
+          <div class="goal-card-desc">Use this property to fund the next acquisition</div>
+        </div>
+        <div class="goal-card selected" id="goal-cashflow" onclick="selectGoal('cashflow')">
+          <div class="goal-card-icon">💵</div>
+          <div class="goal-card-title">Maximize Cash Flow</div>
+          <div class="goal-card-desc">Generate maximum monthly income now</div>
+        </div>
+      </div>
+    </div>
+
     <!-- SECTION 1: PROPERTY -->
     <div class="form-section">
       <div class="section-header">
@@ -831,6 +1191,7 @@
             <option value="duplex">Duplex (2-unit)</option>
             <option value="triplex">Triplex (3-unit)</option>
             <option value="fourplex">Fourplex (4-unit)</option>
+            <option value="condo">Condominium</option>
           </select>
         </div>
         <div class="field">
@@ -841,6 +1202,22 @@
           </div>
         </div>
       </div>
+
+        <!-- Condo Advisory Panel -->
+        <div class="condo-advisory" id="condoAdvisory">
+          <div class="condo-advisory-title">⚠️ Condo-Specific Risk Factors — Read Before Investing</div>
+          <ul>
+            <li><strong>Request the last 2 years of financial statements.</strong> Check the reserve fund balance — underfunded reserves are a serious red flag. Industry standard: reserves should cover at least 10% of the building's replacement cost.</li>
+            <li><strong>Ask directly about pending special assessments.</strong> A single $15,000–$50,000 special assessment can wipe out years of projected cash flow. This is the most common surprise expense condo investors face.</li>
+            <li><strong>Read the last 6–12 months of board meeting minutes.</strong> This is where the real story lives. Look for deferred maintenance discussions, litigation, insurance issues, and reserve shortfall debates.</li>
+            <li><strong>Verify the master insurance policy.</strong> Florida condo insurance has become a crisis — some buildings are losing coverage entirely, making them unfinanceable. Confirm coverage is in place and what your individual policy must cover.</li>
+            <li><strong>Review rental restrictions.</strong> Many condos limit the number of units that can be rented. Short-term rental (Airbnb) restrictions are common and can significantly impact your income strategy.</li>
+          </ul>
+          <div class="condo-advisory-sb4d" id="sb4dWarning" style="display:none">
+            🚨 Florida SB 4D Alert: Buildings 3+ stories over 30 years old are subject to mandatory structural inspections and reserve funding requirements under Florida Statute 718. Many owners are currently receiving five and six-figure special assessments as a result. Verify the building's compliance status before proceeding.
+          </div>
+        </div>
+
     </div>
 
     <!-- SECTION 2: FINANCING -->
@@ -1067,9 +1444,9 @@
         <div class="metric-delta">after all expenses</div>
       </div>
       <div class="metric-card">
-        <div class="metric-label">Cap Rate</div>
-        <div class="metric-value empty" id="r-caprate">—</div>
-        <div class="metric-delta">going-in</div>
+        <div class="metric-label">Max Purchase Price</div>
+        <div class="metric-value empty" id="r-maxprice-top">—</div>
+        <div class="metric-delta">to hit your target</div>
       </div>
     </div>
 
@@ -1084,6 +1461,29 @@
       </div>
     </div>
 
+
+    <!-- What Needs to Change -->
+    <div class="needs-change-box" id="needsChangeBox">
+      <div class="needs-change-title">What Needs to Change for This Deal to Work</div>
+      <div class="needs-change-row">
+        <div class="needs-change-icon ok" id="nc-price-icon">✓</div>
+        <div class="needs-change-text" id="nc-price-text">—</div>
+      </div>
+      <div class="needs-change-row">
+        <div class="needs-change-icon ok" id="nc-rent-icon">✓</div>
+        <div class="needs-change-text" id="nc-rent-text">—</div>
+      </div>
+      <div class="needs-change-row">
+        <div class="needs-change-icon ok" id="nc-rate-icon">✓</div>
+        <div class="needs-change-text" id="nc-rate-text">—</div>
+      </div>
+    </div>
+
+    <!-- Goal-Specific Insight -->
+    <div class="goal-insight-box" id="goalInsightBox">
+      <div class="goal-insight-title" id="goalInsightTitle">Your Goal Insight</div>
+      <div class="goal-insight-text" id="goalInsightText">—</div>
+    </div>
 
     <!-- Wealth Breakdown -->
     <div class="wealth-breakdown">
@@ -1139,6 +1539,39 @@
       </div>
     </div>
 
+    <!-- Sensitivity Tables -->
+    <div class="sensitivity-section" id="sensitivitySection">
+      <!-- Appreciation Sensitivity -->
+      <div class="sensitivity-block">
+        <div class="sensitivity-header">Appreciation Sensitivity — How Market Conditions Affect Your Return</div>
+        <table class="sensitivity-table" id="sensiAppTable">
+          <tr><td>Loading...</td></tr>
+        </table>
+      </div>
+      <!-- Rate Sensitivity -->
+      <div class="sensitivity-block">
+        <div class="sensitivity-header">Rate Sensitivity — Your Return at Different Interest Rates</div>
+        <table class="sensitivity-table" id="sensiRateTable">
+          <tr><td>Loading...</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Strike Rate Box -->
+    <div class="strike-rate-box" id="strikeRateBox">
+      <div class="strike-rate-header">Your Refinance Strike Rate</div>
+      <div class="strike-rate-value" id="strikeRateValue">—</div>
+      <div class="strike-rate-desc" id="strikeRateDesc">—</div>
+      <span class="strike-rate-distance medium" id="strikeRateDistance">—</span>
+    </div>
+
+    <!-- Refinance Tracker Pitch -->
+    <div class="refi-tracker-pitch">
+      <div class="refi-pitch-title">📡 YieldIQ Refinance Tracker</div>
+      <div class="refi-pitch-desc">We'll monitor mortgage rates daily and alert you the moment you hit your strike rate — so you never miss the right window to refinance.</div>
+      <button class="refi-pitch-btn" onclick="alert('Refinance Tracker coming soon — join Pro to be first notified.')">Activate Refinance Tracker (Pro)</button>
+    </div>
+
     <!-- Email CTA -->
     <div class="results-cta">
       <p class="results-cta-text">Get the full detailed report — sensitivity analysis, year-by-year projections, and personalized notes — delivered to your inbox.</p>
@@ -1156,16 +1589,43 @@
 </div><!-- /analyzer-layout -->
 
 <script>
+// ── INVESTOR GOAL ────────────────────────────────────────────
+let currentGoal = 'cashflow';
+
+function selectGoal(goal) {
+  currentGoal = goal;
+  ['payoff','portfolio','cashflow'].forEach(g => {
+    document.getElementById('goal-' + g).classList.remove('selected');
+  });
+  document.getElementById('goal-' + goal).classList.add('selected');
+  recalc();
+}
+
+// ── CONDO ADVISORY ────────────────────────────────────────────
+function updateCondoAdvisory() {
+  const type = document.getElementById('propType').value;
+  const advisory = document.getElementById('condoAdvisory');
+  if (type === 'condo') {
+    advisory.classList.add('show');
+    // Check if building year entered — for now always show SB4D warning in FL
+    document.getElementById('sb4dWarning').style.display = 'block';
+  } else {
+    advisory.classList.remove('show');
+  }
+}
+
 // ── DEFAULTS BY PROPERTY TYPE ──────────────────────────────────
 const DEFAULTS = {
   sfr:      { vacancy: 5,  maintenance_pct: 1.0, mgmt_pct: 0,  capex: 100, insurance_pct: 0.4, rentGrowth: 3, appreciation: 3, sellingCosts: 6, downPct: 20 },
   duplex:   { vacancy: 6,  maintenance_pct: 1.0, mgmt_pct: 8,  capex: 150, insurance_pct: 0.5, rentGrowth: 3, appreciation: 3, sellingCosts: 6, downPct: 25 },
   triplex:  { vacancy: 7,  maintenance_pct: 1.25,mgmt_pct: 8,  capex: 200, insurance_pct: 0.55,rentGrowth: 3, appreciation: 3, sellingCosts: 6, downPct: 25 },
+  condo:    { vacancy: 5,  maintenance_pct: 0.5, mgmt_pct: 0,  capex: 50,  insurance_pct: 0.2, rentGrowth: 3, appreciation: 3, sellingCosts: 6, downPct: 20 },
   fourplex: { vacancy: 7,  maintenance_pct: 1.25,mgmt_pct: 10, capex: 250, insurance_pct: 0.6, rentGrowth: 3, appreciation: 3, sellingCosts: 6, downPct: 25 },
 };
 
 function applyDefaults() {
   const type = document.getElementById('propType').value;
+  updateCondoAdvisory();
   const d = DEFAULTS[type];
   const price = parseFloat(document.getElementById('purchasePrice').value) || 0;
   const rent  = parseFloat(document.getElementById('monthlyRent').value)  || 0;
@@ -1361,14 +1821,27 @@ function recalc() {
   }
   const maxPrice = (lo+hi)/2;
 
+  // Strike rate
+  const strikeRateVal = calcStrikeRate(loanAmount, loanTerm, isIO, monthlyRent, annualExp, vacancyRate);
+
   hasResults = true;
-  updateUI({ mortgage, monthlyCF, cocReturn, capRate, grm, breakEven, irrPct, maxPrice, targetReturn: targetReturn*100,
-    totalCashFlow, appreciationGain, principalPaydown, totalWealth });
+  console.log('About to call updateUI, irrPct=', irrPct, 'mortgage=', mortgage);
+  updateUI({ mortgage, monthlyCF, cocReturn, grm, breakEven, irrPct, maxPrice,
+    targetReturn: targetReturn*100, totalCashFlow, appreciationGain, principalPaydown, totalWealth,
+    strikeRate: strikeRateVal, interestRate, loanAmount, loanTerm, isIO,
+    downPayment, purchasePrice, monthlyRent, annualExp, holdPeriod,
+    sellingCosts: sellingCostsPct*100, vacancyRate: vacancyRate*100,
+    rentGrowth: rentGrowth*100, appreciation: appreciation*100 });
 }
 
 function updateUI(r) {
+  console.log('updateUI called, irrPct=', r.irrPct, 'monthlyCF=', r.monthlyCF);
+  // Compute derived values needed by sub-functions
+  r.annualExp  = r.annualExp  || 0;
+  r.annualMtg  = r.mortgage * 12;
   // IRR
   const irrEl = document.getElementById('r-irr');
+  if (!irrEl) { console.error('r-irr element not found!'); return; }
   irrEl.textContent = fmtPct(r.irrPct);
   irrEl.classList.remove('empty', 'gold', 'green', 'red');
   irrEl.classList.add(r.irrPct >= r.targetReturn ? 'green' : 'red');
@@ -1389,11 +1862,6 @@ function updateUI(r) {
   cfEl.classList.remove('empty', 'green', 'red');
   cfEl.classList.add(r.monthlyCF >= 0 ? 'green' : 'red');
 
-  // Cap rate
-  const crEl = document.getElementById('r-caprate');
-  crEl.textContent = fmtPct(r.capRate);
-  crEl.classList.remove('empty');
-
   // Gauge
   const gaugeRatio = r.targetReturn > 0 ? Math.min((r.irrPct / r.targetReturn) * 100, 120) : 0;
   document.getElementById('gaugeBar').style.width = Math.max(0, gaugeRatio) + '%';
@@ -1408,7 +1876,43 @@ function updateUI(r) {
   // Wealth breakdown
   updateWealthBreakdown(r);
 
-  // Verdict
+  // Max price top metric card
+  const mpTop = document.getElementById('r-maxprice-top');
+  if (mpTop) { mpTop.textContent = '$' + Math.round(r.maxPrice).toLocaleString(); mpTop.classList.remove('empty'); }
+
+  // Needs change panel
+  updateNeedsChange(r.purchasePrice, r.maxPrice, r.monthlyRent, r.breakEven, r.interestRate, r.strikeRate);
+
+  // Goal insight
+  updateGoalInsight(currentGoal, r.monthlyCF, r.totalCashFlow, r.principalPaydown, r.holdPeriod, r.downPayment, r.maxPrice, r.purchasePrice);
+
+  // Sensitivity tables
+  const appTable = document.getElementById('sensiAppTable');
+  if (appTable) appTable.innerHTML = buildAppreciationTable(r);
+
+  const rateTable = document.getElementById('sensiRateTable');
+  if (rateTable) rateTable.innerHTML = buildRateTable(r);
+
+  // Strike rate box
+  if (r.strikeRate) {
+    const srBox = document.getElementById('strikeRateBox');
+    const srVal = document.getElementById('strikeRateValue');
+    const srDesc = document.getElementById('strikeRateDesc');
+    const srDist = document.getElementById('strikeRateDistance');
+    if (srVal) srVal.textContent = r.strikeRate.toFixed(2) + '%';
+    const gap = r.interestRate - r.strikeRate;
+    if (srDesc) {
+      if (r.strikeRate < r.interestRate) {
+        srDesc.textContent = 'If rates drop to ' + r.strikeRate.toFixed(2) + '%, refinancing would flip your cash flow positive. You are currently ' + gap.toFixed(2) + '% above your strike rate.';
+        if (srDist) { srDist.textContent = gap.toFixed(2) + '% above strike rate'; srDist.className = 'strike-rate-distance ' + (gap <= 0.5 ? 'close' : gap <= 1 ? 'medium' : 'far'); }
+      } else {
+        srDesc.textContent = 'Your current rate already supports positive cash flow. Your strike rate is ' + r.strikeRate.toFixed(2) + '% — you are already in the green zone.';
+        if (srDist) { srDist.textContent = 'Already at or below strike rate ✓'; srDist.className = 'strike-rate-distance close'; }
+      }
+    }
+  }
+
+  // Verdict (Decision Dashboard)
   const banner = document.getElementById('verdictBanner');
   const main   = document.getElementById('verdictMain');
   const sub    = document.getElementById('verdictSub');
@@ -1495,7 +1999,7 @@ function setExtra(id, val) {
 
 function showEmpty() {
   hasResults = false;
-  const ids = ['r-irr','r-coc','r-cashflow','r-caprate','r-mortgage','r-breakeven','r-maxprice','r-grm'];
+  const ids = ['r-irr','r-coc','r-cashflow','r-maxprice-top','r-mortgage','r-breakeven','r-maxprice','r-grm'];
   ids.forEach(id => {
     const el = document.getElementById(id);
     el.textContent = '—';
@@ -1540,6 +2044,156 @@ function submitReport() {
 
 // ── INIT ──────────────────────────────────────────────────────
 applyDefaults();
+
+// ── SENSITIVITY TABLES ────────────────────────────────────────
+function buildAppreciationTable(p) {
+  // p = full params object
+  const deltas = [-2, -1, 0, 1, 2];
+  let rows = '<tr><td style="color:rgba(255,255,255,0.3);font-size:0.6rem;padding:5px 14px 4px;" colspan="3">APPRECIATION · IRR · VS TARGET</td></tr>';
+  deltas.forEach(delta => {
+    const app = Math.max(0, p.appreciation + delta);
+    const flows = [-p.downPayment];
+    for (let yr = 1; yr <= p.holdPeriod; yr++) {
+      const rent = p.monthlyRent * 12 * Math.pow(1 + p.rentGrowth/100, yr-1) * (1 - p.vacancyRate/100);
+      const cf = rent - p.annualExp - p.annualMtg;
+      if (yr === p.holdPeriod) {
+        const ep = p.purchasePrice * Math.pow(1 + app/100, p.holdPeriod);
+        let bal = p.loanAmount;
+        if (!p.isIO) {
+          const r2 = p.interestRate/100/12; const n2 = p.loanTerm*12; const pm2 = p.holdPeriod*12;
+          if (Math.pow(1+r2,n2) > 1) bal = p.loanAmount*(Math.pow(1+r2,n2)-Math.pow(1+r2,pm2))/(Math.pow(1+r2,n2)-1);
+        }
+        flows.push(cf + ep - ep*(p.sellingCosts/100) - bal);
+      } else { flows.push(cf); }
+    }
+    const irr = calcIRR(flows) * 100;
+    const diff = irr - p.targetReturn;
+    const isBase = delta === 0;
+    const cls = isBase ? ' class="active-row"' : '';
+    const diffStr = (diff >= 0 ? '+' : '') + diff.toFixed(1) + '%';
+    const diffCls = isBase ? '' : (diff >= 0 ? 'sens-positive' : 'sens-negative');
+    rows += '<tr' + cls + '><td>' + app.toFixed(1) + '% apprec.</td><td>' + irr.toFixed(1) + '% IRR</td><td class="' + diffCls + '">' + diffStr + '</td></tr>';
+  });
+  return rows;
+}
+
+function buildRateTable(p) {
+  const deltas = [-0.5, -0.25, 0, 0.25, 0.5, 0.75, 1.0];
+  let rows = '<tr><td style="color:rgba(255,255,255,0.3);font-size:0.6rem;padding:5px 14px 4px;" colspan="4">RATE · PAYMENT · CASH FLOW · IRR</td></tr>';
+  deltas.forEach(delta => {
+    const rate = Math.max(0.5, p.interestRate + delta);
+    const mtg = calcMortgage(p.loanAmount, rate, p.loanTerm, p.isIO);
+    const annMtg = mtg * 12;
+    const effRent = p.monthlyRent * 12 * (1 - p.vacancyRate/100);
+    const monthlyCF = (effRent - p.annualExp - annMtg) / 12;
+    const flows = [-p.downPayment];
+    for (let yr = 1; yr <= p.holdPeriod; yr++) {
+      const rent = p.monthlyRent * 12 * Math.pow(1 + p.rentGrowth/100, yr-1) * (1 - p.vacancyRate/100);
+      const cf = rent - p.annualExp - annMtg;
+      if (yr === p.holdPeriod) {
+        const ep = p.purchasePrice * Math.pow(1 + p.appreciation/100, p.holdPeriod);
+        let bal = p.loanAmount;
+        if (!p.isIO) {
+          const r2 = rate/100/12; const n2 = p.loanTerm*12; const pm2 = p.holdPeriod*12;
+          if (Math.pow(1+r2,n2) > 1) bal = p.loanAmount*(Math.pow(1+r2,n2)-Math.pow(1+r2,pm2))/(Math.pow(1+r2,n2)-1);
+        }
+        flows.push(cf + ep - ep*(p.sellingCosts/100) - bal);
+      } else { flows.push(cf); }
+    }
+    const irr = calcIRR(flows) * 100;
+    const isBase = delta === 0;
+    const cls = isBase ? ' class="active-row"' : '';
+    const cfStr = (monthlyCF >= 0 ? '+' : '-') + '$' + Math.abs(Math.round(monthlyCF)).toLocaleString() + '/mo';
+    const cfCls = isBase ? '' : (monthlyCF >= 0 ? 'sens-positive' : 'sens-negative');
+    rows += '<tr' + cls + '><td>' + rate.toFixed(2) + '%</td><td>$' + Math.round(mtg).toLocaleString() + '/mo</td><td class="' + cfCls + '">' + cfStr + '</td><td>' + irr.toFixed(1) + '%</td></tr>';
+  });
+  return rows;
+}
+
+// ── STRIKE RATE ───────────────────────────────────────────────
+function calcStrikeRate(loanAmount, loanTerm, isIO, monthlyRent, annualExp, vacancyRate) {
+  // Strike rate = rate where monthly cash flow = 0 (break even on cash flow)
+  const effectiveRent = monthlyRent * (1 - vacancyRate);
+  const targetMtg = effectiveRent - annualExp / 12;
+  if (targetMtg <= 0) return null;
+  // Binary search for rate where mortgage = targetMtg
+  let lo = 0.5, hi = 15;
+  for (let i = 0; i < 60; i++) {
+    const mid = (lo + hi) / 2;
+    const mtg = calcMortgage(loanAmount, mid, loanTerm, isIO);
+    if (mtg > targetMtg) hi = mid; else lo = mid;
+  }
+  return (lo + hi) / 2;
+}
+
+// ── NEEDS CHANGE PANEL ────────────────────────────────────────
+function updateNeedsChange(purchasePrice, maxPrice, monthlyRent, breakEvenRent, interestRate, strikeRate) {
+  // Price
+  const priceOk = purchasePrice <= maxPrice;
+  const priceGap = purchasePrice - maxPrice;
+  document.getElementById('nc-price-icon').className = 'needs-change-icon ' + (priceOk ? 'ok' : 'bad');
+  document.getElementById('nc-price-icon').textContent = priceOk ? '✓' : '↓';
+  document.getElementById('nc-price-text').innerHTML = priceOk
+    ? `<strong>Purchase price is within range.</strong> Max price to hit your target: <strong>$${Math.round(maxPrice).toLocaleString()}</strong>`
+    : `<strong>Negotiate $${Math.round(priceGap).toLocaleString()} off the asking price</strong> to hit your required return. Target max: <strong>$${Math.round(maxPrice).toLocaleString()}</strong>`;
+
+  // Rent
+  const rentOk = monthlyRent >= breakEvenRent;
+  const rentGap = breakEvenRent - monthlyRent;
+  document.getElementById('nc-rent-icon').className = 'needs-change-icon ' + (rentOk ? 'ok' : 'warn');
+  document.getElementById('nc-rent-icon').textContent = rentOk ? '✓' : '↑';
+  document.getElementById('nc-rent-text').innerHTML = rentOk
+    ? `<strong>Rent covers all expenses.</strong> Break-even rent is <strong>$${Math.round(breakEvenRent).toLocaleString()}/mo</strong>`
+    : `<strong>Need $${Math.round(rentGap).toLocaleString()}/mo more in rent</strong> to cover all expenses. Break-even: <strong>$${Math.round(breakEvenRent).toLocaleString()}/mo</strong>`;
+
+  // Rate
+  if (strikeRate && strikeRate < interestRate) {
+    document.getElementById('nc-rate-icon').className = 'needs-change-icon warn';
+    document.getElementById('nc-rate-icon').textContent = '↓';
+    document.getElementById('nc-rate-text').innerHTML = `<strong>Rate needs to drop ${(interestRate - strikeRate).toFixed(2)}%</strong> for positive cash flow. Your strike rate: <strong>${strikeRate.toFixed(2)}%</strong>`;
+  } else {
+    document.getElementById('nc-rate-icon').className = 'needs-change-icon ok';
+    document.getElementById('nc-rate-icon').textContent = '✓';
+    document.getElementById('nc-rate-text').innerHTML = `<strong>Current rate supports positive cash flow.</strong> You're already at or below your break-even rate.`;
+  }
+}
+
+// ── GOAL INSIGHT ──────────────────────────────────────────────
+function updateGoalInsight(goal, monthlyCF, totalCashFlow, principalPaydown, holdPeriod, downPayment, maxPrice, purchasePrice) {
+  const box = document.getElementById('goalInsightBox');
+  const title = document.getElementById('goalInsightTitle');
+  const text = document.getElementById('goalInsightText');
+  box.classList.add('show');
+
+  const monthsToNextDP = downPayment > 0 && monthlyCF > 0 ? Math.ceil(downPayment / monthlyCF) : null;
+
+  if (goal === 'payoff') {
+    title.textContent = '🏠 Payoff Investor Insight';
+    const extraPmt = 200;
+    text.innerHTML = `Over your <strong>${holdPeriod}-year hold</strong>, you'll build <strong>$${Math.round(principalPaydown).toLocaleString()}</strong> in equity through mortgage paydown alone. Adding an extra <strong>$200/month</strong> toward principal could accelerate your payoff timeline significantly and save tens of thousands in interest.`;
+  } else if (goal === 'portfolio') {
+    title.textContent = '📈 Portfolio Builder Insight';
+    if (monthsToNextDP && monthsToNextDP > 0) {
+      const yrs = Math.floor(monthsToNextDP / 12);
+      const mos = monthsToNextDP % 12;
+      text.innerHTML = `At your current cash flow of <strong>$${Math.round(monthlyCF).toLocaleString()}/mo</strong>, you'll accumulate enough for another <strong>20% down payment</strong> in approximately <strong>${yrs > 0 ? yrs + ' years' : ''} ${mos > 0 ? mos + ' months' : ''}</strong>. Improving cash flow accelerates your next acquisition.`;
+    } else if (monthlyCF < 0) {
+      text.innerHTML = `This property is currently cash flow negative — it won't accumulate reserves for your next acquisition. Consider negotiating the price down to <strong>$${Math.round(maxPrice).toLocaleString()}</strong> to improve cash flow and accelerate your portfolio growth timeline.`;
+    } else {
+      text.innerHTML = `This property's cash flow will help fund your next acquisition. Focus on maximizing rent and minimizing vacancy to build your war chest faster.`;
+    }
+  } else {
+    title.textContent = '💵 Cash Flow Optimizer Insight';
+    if (monthlyCF >= 0) {
+      text.innerHTML = `This property generates <strong>$${Math.round(monthlyCF).toLocaleString()}/mo</strong> in net cash flow. To maximize income: review property management fees (self-managing adds ~8-10% of rent back to your pocket), and set rent at renewal to current market rates.`;
+    } else {
+      const needed = Math.abs(monthlyCF);
+      text.innerHTML = `This property is <strong>$${Math.round(needed).toLocaleString()}/mo cash flow negative</strong>. Three levers to flip it positive: negotiate the purchase price down, increase rent at signing, or buy down your rate. See the rate sensitivity table below for your exact break-even rate.`;
+    }
+  }
+}
+
+
 </script>
 </body>
 </html>
