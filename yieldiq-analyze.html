@@ -1316,15 +1316,11 @@
           </select>
         </div>
         <div class="field">
-          <label><span class="field-label-wrap">Loan Type<span class="tooltip-icon">i<span class="tooltip-text">Conventional: fixed principal + interest payments. Interest Only: lower payments early but no equity buildup. ARM: rate adjusts after an initial fixed period.</span></span></span></label>
-          <div class="toggle-group">
-            <input type="radio" name="loanType" id="lt-conv" value="conventional" checked onchange="recalc()"/>
-            <label for="lt-conv">Conventional</label>
-            <input type="radio" name="loanType" id="lt-io" value="io" onchange="recalc()"/>
-            <label for="lt-io">Interest Only</label>
-            <input type="radio" name="loanType" id="lt-arm" value="arm" onchange="recalc()"/>
-            <label for="lt-arm">ARM</label>
+          <label><span class="field-label-wrap">Loan Type<span class="tooltip-icon">i<span class="tooltip-text">YieldIQ currently models fully amortizing loans — fixed principal + interest payments over the full loan term. This is the standard structure for 1-4 unit investment properties.</span></span></span></label>
+          <div style="padding: 9px 12px; border: 1px solid var(--border); border-radius: 5px; font-family: 'JetBrains Mono', monospace; font-size: 0.84rem; color: var(--ink-muted); background: var(--bg-soft);">
+            Fully Amortizing
           </div>
+          <input type="hidden" name="loanType" id="lt-conv" value="conventional"/>
         </div>
       </div>
     </div>
@@ -1760,8 +1756,7 @@ function getVal(id, fallback = 0) {
 function fmt(n)    { return '$' + Math.round(n).toLocaleString(); }
 function fmtPct(n) { return n.toFixed(1) + '%'; }
 
-function calcMortgage(principal, annualRate, termYears, isIO) {
-  if (isIO) return principal * (annualRate / 100 / 12);
+function calcMortgage(principal, annualRate, termYears) {
   const r = annualRate / 100 / 12;
   const n = termYears * 12;
   if (r === 0) return principal / n;
@@ -1798,7 +1793,7 @@ function recalc() {
   const downPct      = getVal('downPaymentPct', 25) / 100;
   const interestRate = getVal('interestRate', 7.25);
   const loanTerm     = parseInt(document.getElementById('loanTerm').value);
-  const isIO         = document.querySelector('input[name="loanType"]:checked').value === 'io';
+  const isIO         = false; // Fully amortizing only
   const vacancyRate  = getVal('vacancyRate', 5) / 100;
   const rentGrowth   = getVal('rentGrowth', 3) / 100;
   const appreciation = getVal('appreciation', 3) / 100;
@@ -1816,7 +1811,7 @@ function recalc() {
 
   const downPayment = purchasePrice * downPct;
   const loanAmount  = purchasePrice - downPayment;
-  const mortgage    = calcMortgage(loanAmount, interestRate, loanTerm, isIO);
+  const mortgage    = calcMortgage(loanAmount, interestRate, loanTerm);
 
   const totalMonthlyExp = taxes + insurance + hoa + maintenance + mgmt + capex + other;
   const effectiveRentYr1 = monthlyRent * 12 * (1 - vacancyRate);
@@ -1844,13 +1839,10 @@ function recalc() {
     if (yr === holdPeriod) {
       const exitPrice = purchasePrice * Math.pow(1+appreciation, holdPeriod);
       const exitCost  = exitPrice * sellingCosts;
-      let balance = loanAmount;
-      if (!isIO) {
-        const r = interestRate / 100 / 12;
-        const n = loanTerm * 12;
-        const pm = holdPeriod * 12;
-        balance = loanAmount * (Math.pow(1+r,n) - Math.pow(1+r,pm)) / (Math.pow(1+r,n)-1);
-      }
+      const r0 = interestRate / 100 / 12;
+      const n0 = loanTerm * 12;
+      const pm0 = holdPeriod * 12;
+      const balance = Math.pow(1+r0,n0) > 1 ? loanAmount * (Math.pow(1+r0,n0) - Math.pow(1+r0,pm0)) / (Math.pow(1+r0,n0)-1) : 0;
       flows.push(cf + exitPrice - exitCost - balance);
     } else {
       flows.push(cf);
@@ -1877,13 +1869,10 @@ function recalc() {
   const appreciationGain = exitPrice - exitCost - purchasePrice;
 
   // 3. Principal paydown (loan balance reduction over hold period)
-  let endBalance = loanAmount;
-  if (!isIO) {
-    const r2 = interestRate / 100 / 12;
-    const n2 = loanTerm * 12;
-    const pm2 = holdPeriod * 12;
-    endBalance = loanAmount * (Math.pow(1+r2,n2) - Math.pow(1+r2,pm2)) / (Math.pow(1+r2,n2)-1);
-  }
+  const r2 = interestRate / 100 / 12;
+  const n2 = loanTerm * 12;
+  const pm2 = holdPeriod * 12;
+  const endBalance = Math.pow(1+r2,n2) > 1 ? loanAmount * (Math.pow(1+r2,n2) - Math.pow(1+r2,pm2)) / (Math.pow(1+r2,n2)-1) : 0;
   const principalPaydown = loanAmount - endBalance;
 
   // Total wealth created (can include negative CF)
@@ -1894,7 +1883,7 @@ function recalc() {
   function irrAtPrice(price) {
     const dp = price * downPct;
     const ln = price - dp;
-    const mt = calcMortgage(ln, interestRate, loanTerm, isIO);
+    const mt = calcMortgage(ln, interestRate, loanTerm);
     const annMt = mt * 12;
     const f = [-dp];
     for (let yr = 1; yr <= holdPeriod; yr++) {
@@ -1906,11 +1895,8 @@ function recalc() {
       if (yr === holdPeriod) {
         const ep = price * Math.pow(1+appreciation, holdPeriod);
         const ec = ep * sellingCosts;
-        let bal = ln;
-        if (!isIO) {
-          const r2 = interestRate/100/12; const n2 = loanTerm*12; const pm2 = holdPeriod*12;
-          if (Math.pow(1+r2,n2) > 1) bal = ln*(Math.pow(1+r2,n2)-Math.pow(1+r2,pm2))/(Math.pow(1+r2,n2)-1);
-        }
+        const r2 = interestRate/100/12; const n2 = loanTerm*12; const pm2 = holdPeriod*12;
+        const bal = Math.pow(1+r2,n2) > 1 ? ln*(Math.pow(1+r2,n2)-Math.pow(1+r2,pm2))/(Math.pow(1+r2,n2)-1) : 0;
         f.push(cf + ep - ec - bal);
       } else { f.push(cf); }
     }
@@ -1924,13 +1910,13 @@ function recalc() {
   const maxPrice = (lo + hi) / 2;
 
   // Strike rate
-  const strikeRateVal = calcStrikeRate(loanAmount, loanTerm, isIO, monthlyRent, annualExp, vacancyRate, interestRate, mortgage);
+  const strikeRateVal = calcStrikeRate(loanAmount, loanTerm, monthlyRent, annualExp, vacancyRate, interestRate, mortgage);
 
   hasResults = true;
   console.log('About to call updateUI, irrPct=', irrPct, 'mortgage=', mortgage);
   updateUI({ mortgage, monthlyCF, cocReturn, grm, breakEven, irrPct, maxPrice,
     targetReturn: targetReturn*100, totalCashFlow, appreciationGain, principalPaydown, totalWealth,
-    strikeRate: strikeRateVal, interestRate, loanAmount, loanTerm, isIO,
+    strikeRate: strikeRateVal, interestRate, loanAmount, loanTerm,
     downPayment, purchasePrice, monthlyRent, annualExp, holdPeriod,
     sellingCosts: sellingCosts*100, vacancyRate: vacancyRate*100,
     rentGrowth: rentGrowth*100, appreciation: appreciation*100 });
@@ -2006,7 +1992,7 @@ function updateUI(r) {
     if (srDesc) {
       if (r.strikeRate && r.strikeRate < r.interestRate) {
         const closingCosts = Math.round(r.loanAmount * 0.02).toLocaleString();
-        const monthlySavings = Math.round((calcMortgage(r.loanAmount, r.strikeRate, r.loanTerm, r.isIO) - calcMortgage(r.loanAmount, r.interestRate, r.loanTerm, r.isIO)) * -1);
+        const monthlySavings = Math.round((calcMortgage(r.loanAmount, r.strikeRate, r.loanTerm) - calcMortgage(r.loanAmount, r.interestRate, r.loanTerm)) * -1);
         srDesc.textContent = 'At ' + r.strikeRate.toFixed(2) + '%, refinancing breaks even within 24 months on ~$' + closingCosts + ' in closing costs. You are ' + gap.toFixed(2) + '% away from your strike rate.';
         if (srDist) { srDist.textContent = gap.toFixed(2) + '% away from strike rate'; srDist.className = 'strike-rate-distance ' + (gap <= 0.5 ? 'close' : gap <= 1 ? 'medium' : 'far'); }
       } else {
@@ -2164,10 +2150,8 @@ function buildAppreciationTable(p) {
       if (yr === p.holdPeriod) {
         const ep = p.purchasePrice * Math.pow(1 + app/100, p.holdPeriod);
         let bal = p.loanAmount;
-        if (!p.isIO) {
           const r2 = p.interestRate/100/12; const n2 = p.loanTerm*12; const pm2 = p.holdPeriod*12;
-          if (Math.pow(1+r2,n2) > 1) bal = p.loanAmount*(Math.pow(1+r2,n2)-Math.pow(1+r2,pm2))/(Math.pow(1+r2,n2)-1);
-        }
+        if (Math.pow(1+r2,n2) > 1) bal = p.loanAmount*(Math.pow(1+r2,n2)-Math.pow(1+r2,pm2))/(Math.pow(1+r2,n2)-1);
         flows.push(cf + ep - ep*(p.sellingCosts/100) - bal);
       } else { flows.push(cf); }
     }
@@ -2187,7 +2171,7 @@ function buildRateTable(p) {
   let rows = '<tr><td style="color:rgba(255,255,255,0.3);font-size:0.6rem;padding:5px 14px 4px;" colspan="4">RATE · PAYMENT · CASH FLOW · IRR</td></tr>';
   deltas.forEach(delta => {
     const rate = Math.max(0.5, p.interestRate + delta);
-    const mtg = calcMortgage(p.loanAmount, rate, p.loanTerm, p.isIO);
+    const mtg = calcMortgage(p.loanAmount, rate, p.loanTerm);
     const annMtg = mtg * 12;
     const effRent = p.monthlyRent * 12 * (1 - p.vacancyRate/100);
     const monthlyCF = (effRent - p.annualExp - annMtg) / 12;
@@ -2198,10 +2182,8 @@ function buildRateTable(p) {
       if (yr === p.holdPeriod) {
         const ep = p.purchasePrice * Math.pow(1 + p.appreciation/100, p.holdPeriod);
         let bal = p.loanAmount;
-        if (!p.isIO) {
-          const r2 = rate/100/12; const n2 = p.loanTerm*12; const pm2 = p.holdPeriod*12;
-          if (Math.pow(1+r2,n2) > 1) bal = p.loanAmount*(Math.pow(1+r2,n2)-Math.pow(1+r2,pm2))/(Math.pow(1+r2,n2)-1);
-        }
+        const r2 = rate/100/12; const n2 = p.loanTerm*12; const pm2 = p.holdPeriod*12;
+        if (Math.pow(1+r2,n2) > 1) bal = p.loanAmount*(Math.pow(1+r2,n2)-Math.pow(1+r2,pm2))/(Math.pow(1+r2,n2)-1);
         flows.push(cf + ep - ep*(p.sellingCosts/100) - bal);
       } else { flows.push(cf); }
     }
@@ -2218,7 +2200,7 @@ function buildRateTable(p) {
 // ── STRIKE RATE ───────────────────────────────────────────────
 // Strike rate = the rate at which refinancing breaks even within 24 months
 // Break-even months = estimated closing costs / monthly payment savings
-function calcStrikeRate(loanAmount, loanTerm, isIO, monthlyRent, annualExp, vacancyRate, currentRate, currentMortgage) {
+function calcStrikeRate(loanAmount, loanTerm, monthlyRent, annualExp, vacancyRate, currentRate, currentMortgage) {
   // Estimated refinance closing costs: ~2% of loan amount (typical)
   const closingCosts = loanAmount * 0.02;
   // Target payback period: 24 months
@@ -2232,7 +2214,7 @@ function calcStrikeRate(loanAmount, loanTerm, isIO, monthlyRent, annualExp, vaca
   let lo = 0.5, hi = currentRate;
   for (let i = 0; i < 80; i++) {
     const mid = (lo + hi) / 2;
-    const mtg = calcMortgage(loanAmount, mid, loanTerm, isIO);
+    const mtg = calcMortgage(loanAmount, mid, loanTerm);
     if (mtg > targetMortgage) hi = mid; else lo = mid;
   }
   const strikeRate = (lo + hi) / 2;
